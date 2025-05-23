@@ -126,7 +126,7 @@
 <!--
             <span class="user-icon"><img src="user_icon.png" alt="user"/></span>
 -->
-            <span class="user-name">홍길동<p>▼</p></span>
+            <span class="user-name">홍길동<span>▼</span></span>
         `;
     } else {
         userSection.innerHTML = `

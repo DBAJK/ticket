@@ -5,7 +5,29 @@
     <select id="idCheck" parameterType="String" resultType="Integer">
         SELECT  count(*)
         FROM users
-        WHERE username = #{userId}
+        WHERE userId = #{userId}
+    </select>
+<!--
+    <insert id="saveJoinForm" parameterType="TicketVo">
+        INSERT INTO users(userId, password, email, BIRTHDAY, name, point, phone, createdAt, updatedAt)
+        VALUES(
+                #{userId}
+              , #{userPw}
+              , #{email}
+              , #{birtyD}
+              , #{name}
+              , 0
+              , #{telNo}
+              , SYSDATE
+              , SYSDATE
+              )
+    </insert>
+-->
+
+    <select id="userChk" parameterType="com.pj.ticket.vo.TicketVo" resultType="Integer">
+        SELECT count(*)
+        FROM users
+        WHERE userId = #{userId} AND password = #{userPw}
     </select>
 
 </mapper>

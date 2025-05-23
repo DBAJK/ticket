@@ -60,7 +60,7 @@ public class ticketController {
 
 
 /*
-    @RequestMapping("/service/saveJoinForm.do")
+    @RequestMapping("/saveJoinForm.do")
     @ResponseBody
     public void saveJoinForm(TicketVo vo){
         try {
@@ -72,7 +72,7 @@ public class ticketController {
     }
 */
 
-    @RequestMapping("/service/idCheck.do")
+    @RequestMapping("/idCheck")
     @ResponseBody
     public String idCheck(@RequestParam("userId") String userId){
         int cntChk=0;
@@ -89,30 +89,20 @@ public class ticketController {
         return cnt;
     }
 
-/*
-    @RequestMapping(value = "/survey/loginForm.do", method= RequestMethod.POST)
+    @RequestMapping(value = "/service/loginForm")
     @ResponseBody
-    public String loginCheck(HttpServletRequest request, HttpServletResponse response, TicketVo vo) {
+    public String loginCheck(HttpServletRequest request, TicketVo vo) {
         String userIdChk = request.getParameter("userId");
-        String userPwChk = request.getParameter("userPw");
         String loginId="";
-        String userId = ticketService.userIdCheck(vo);
-        String userPwd = ticketService.pwdCheck(vo);
-        String mngr = ticketService.mngrCheck(vo);
+        vo.setUserId(userIdChk);
+        vo.setUserPw(request.getParameter("userPw"));
+        int userChk = ticketService.userChk(vo);
         HttpSession session = request.getSession();
 
-        System.out.println("userId : " + userId + ", userPw : " + userPwd + ", mngr : " + mngr);
-        System.out.println("userId : " + userIdChk + ", userPw : " + userPwChk);
-
-        if(userIdChk.equals(userId) && userPwChk.equals(userPwd)){
+        if(userChk == 1){
             loginId = "loginOk";
-            session.setAttribute("userId", userId);
-            session.setAttribute("mngyYn", mngr);
+            session.setAttribute("userId", userIdChk);
         }
-        System.out.println("session id : " + session.getAttribute("userId") + ", session mg : " + session.getAttribute("mngyYn"));
         return loginId;
     }
-*/
-
-
 }

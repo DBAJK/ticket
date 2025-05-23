@@ -204,12 +204,12 @@
                 var params =$("#joinForm").serialize();
                 console.log(params);
                 $.ajax({
-                    url : '/service/saveJoinForm.do',
+                    url : '/saveJoinForm.do',
                     data : params,
                     type : 'POST',
                     success : function(data){
                         alert("회원가입에 성공하였습니다.");
-                        location.href="/loginForm.do";
+                        // location.href="/loginForm";
                     },
                     error : function(request, status, error) {
                         console.log("code: " + request.status);
@@ -246,7 +246,7 @@
         console.log(userId);
 
         $.ajax({
-            url : "/service/idCheck.do",
+            url : "/idCheck",
             type : "post",
             data : {"userId" : userId},
             dataType : 'text',

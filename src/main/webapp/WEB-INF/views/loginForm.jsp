@@ -13,27 +13,26 @@
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
 <script type="text/javascript" >
-    $(document).ready(function() {
-        $("#loginCheck").click(function(){
-            var params =$("#loginForm").serialize();
-            $.ajax({
-                type : "post",
-                url : "/survey/loginForm.do",
-                data : params,
-                success : function(data){
-                    if(data == "loginOk"){
-                        location.href = '/mainForm.do';
-                    } else {
-                        alert("로그인에 실패하였습니다.\nID와 비밀번호를 확인해주세요.");
-                    }
-                },
-                error : function(request, status, error){
-                    console.log(request.status);
-                    console.log(error);
+    function loginChk(){
+        var params =$("#loginForm").serialize();
+        console.log(params);
+        $.ajax({
+            type : "post",
+            url : "/service/loginForm",
+            data : params,
+            success : function(data){
+                if(data == "loginOk"){
+                    location.href = '/mainForm';
+                } else {
+                    alert("로그인에 실패하였습니다.\nID와 비밀번호를 확인해주세요.");
                 }
-            });
+            },
+            error : function(request, status, error){
+                console.log(request.status);
+                console.log(error);
+            }
         });
-    });
+    }
 
 </script>
 <style>
@@ -42,6 +41,7 @@
         width: 100%;
         height: 62px;
         padding: 0 12px;
+        margin-bottom: 15px;
         font-size: 1rem;
         border: 1.5px solid #d0d2d8;
         border-radius: 6px;
@@ -58,15 +58,15 @@
 </style>
 <body>
     <!-- 로그인 폼 영역 -->
-    <div style="width:500px; text-align:center;">
+    <div style="width:600px; text-align:center;">
         <h1 style="color:#4a5cc6; font-size: 70px">LOGIN</h1>
         <form id="loginForm" name="loginForm" method="post">
-            <input type="text" placeholder="ID" style="width:100%; height:40px; margin-bottom:15px; font-size:18px;"/><br/>
-            <input type="password" placeholder="PASSWORD" style="width:100%; height:40px; margin-bottom:20px; font-size:18px;"/><br/>
+            <input type="text" id="userId" name="userId" placeholder="ID" /><br/>
+            <input type="password" id="userPw" name="userPw" placeholder="PASSWORD" /><br/>
             <div style="margin-bottom:20px; color:#888;">
                 <a href="joinForm" >회원 가입</a>
             </div>
-            <button type="submit" style="width:100%; height:45px; background:#4a5cc6; color:#fff; font-size:20px; border:none; border-radius:5px;">Login</button>
+            <button type="button" onclick="loginChk();" style="width:100%; height:45px; background:#4a5cc6; color:#fff; font-size:20px; border:none; border-radius:5px;">Login</button>
         </form>
     </div>
 </body>
