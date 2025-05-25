@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: jgkim
-  Date: 2025-05-13
-  Time: 오후 7:40
+  Date: 2025-05-25
+  Time: 오후 2:23
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
@@ -35,7 +35,7 @@
     }
 
     .contentArea .btnPanel,
-        #joinForm .btnPanel {
+    #joinForm .btnPanel {
         display: flex;
         gap: 10px;
         margin-top: 24px;
@@ -106,7 +106,7 @@
         font-weight: bold;
         cursor: pointer;
         transition: background 0.2s;
-        width: 50px;
+        width: 80px;
     }
 
     #btnSave:hover {
@@ -157,86 +157,73 @@
     }
 </style>
 <body>
-    <div class="contentArea">
-        <div class="headerArea">
-            <span>Sign UP</span>
-            <div class="btnPanel">
-                <button type="button" id="btnSave">가입</button>
-                <button type="button" id="btnDel">취소</button><br>
-            </div>
+<div class="contentArea">
+    <div class="headerArea">
+        <span>마이페이지</span>
+        <div class="btnPanel">
+            <button type="button" id="btnSave">계정 변경</button>
+            <button type="button" id="btnDel">취소</button><br>
         </div>
-        <form id="joinForm" name="joinForm" method="post">
-            <p>아이디</p>
-            <div class="input-with-btn">
-                <input type="text" name="userId" id="userId" placeholder="아이디 입력 (6~20자)">
-                <button type="button" class="input-btn" onclick="doubleChk();">중복확인</button>
-            </div>
-            <input type="hidden" name="idUnCheck" id="idUnCheck"/>  <!--  id 중복체크 여부 확인 -->
-
-            <p>비밀번호</p> <input type="password" name="userPw" id="userPw" placeholder="비밀번호 입력(문자, 숫자, 특수문자 포함 8~20자)"><br>
-            <p>비밀번호 확인</p> <input type="password" name="userPwChk" id="userPwChk" placeholder="비밀번호 재입력"><br>
-
-            <p>이름</p> <input type="text" name="userName" id="userName" placeholder="이름을 입력해주세요."><br>
-            <p>전화번호</p> <input type="tel" name="telNo" id="telNo" placeholder="유대폰 번호 입력( ‘-’ 제외 11자리 입력)"><br>
-            <p>생년월일</p> <input type="date" name="birtyD" id="birtyD" ><br>
-        </form>
-
     </div>
+    <form id="joinForm" name="joinForm" method="post">
+        <p>아이디</p><input type="text" name="userId" id="userId">
+        <p>비밀번호</p> <input type="password" name="userPw" id="userPw" placeholder="변경할 비밀번호 입력(문자, 숫자, 특수문자 포함 8~20자)"><br>
+        <p>비밀번호 확인</p> <input type="password" name="userPwChk" id="userPwChk" placeholder="변경할 비밀번호 재입력"><br>
+
+        <p>이름</p> <input type="text" name="userName" id="userName" placeholder="변경할 이름을 입력해주세요."><br>
+        <p>전화번호</p> <input type="tel" name="telNo" id="telNo" ><br>
+        <p>생년월일</p> <input type="text" name="birtyD" id="birtyD" ><br>
+        <p>사용자 포인트</p> <input type="text" name="userPoint" id="userPoint"><br>
+    </form>
+
+</div>
 </body>
-
-<script type="text/javascript">
-    var idck = 0;
-
-    $(document).ready(function() {
-
-        // 전화번호 자동 포맷팅
-        $("#telNo").on("input", function () {
-            var num = $(this).val().replace(/[^0-9]/g, '').substring(0, 11);
-            var formatted = '';
-            if (num.length <= 3) {
-                formatted = num;
-            } else if (num.length <= 7) {
-                formatted = num.substring(0, 3) + '-' + num.substring(3);
-            } else {
-                formatted = num.substring(0, 3) + '-' + num.substring(3, 7) + '-' + num.substring(7);
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: "/myPageInfo",
+            type: "GET",
+            dataType: "json",
+            success: function (res) {
+                if (res.status === "success") {
+                    $("#userId").val(res.userId).prop("readonly", true);
+                    $("#userName").val(res.userName);
+                    $("#telNo").val(res.phone).prop("readonly", true);
+                    $("#birtyD").val(res.birthday).prop("readonly", true);
+                    $("#userPoint").val(res.point).prop("readonly", true);
+                    // 패스워드는 서버에서 보통 내려주지 않으므로 빈 채로 둡니다.
+                } else {
+                    alert("사용자 정보를 불러오지 못했습니다.");
+                    location.href = "/sportsForm";
+                }
+            },
+            error: function (err) {
+                console.error("에러 발생:", err);
+                alert("서버 오류가 발생했습니다.");
             }
-            $(this).val(formatted);
         });
-
-        // 저장 버튼 클릭 시
+        // 계정 변경 저장
         $("#btnSave").click(function(){
-            if (!checkExistData(joinForm.userId.value, "아이디")) return false;
-            if (idck !== 1) {
-                alert("아이디 중복 확인을 완료해 주세요.");
-                return false;
-            }
-            if (!checkExistData(joinForm.userPw.value, "비밀번호")) return false;
-            if (!checkExistData(joinForm.userPwChk.value, "비밀번호 확인")) return false;
             if (joinForm.userPw.value !== joinForm.userPwChk.value) {
                 alert("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
                 $("#userPwChk").focus();
                 return false;
             }
-            if (!checkExistData(joinForm.userName.value, "이름")) return false;
-            if (!checkExistData(joinForm.telNo.value, "전화번호")) return false;
-            if (!checkExistData(joinForm.birtyD.value, "생년월일")) return false;
-
-            if (confirm("회원가입 하시겠습니까?")) {
+            if (confirm("비밀번호/이름을 변경 하시겠습니까?")) {
                 var params = $("#joinForm").serialize();
                 console.log(params);
                 $.ajax({
-                    url: '/saveJoinForm',
+                    url: '/updateUsersInfo',
                     data: params,
                     type: 'POST',
                     success: function(data) {
-                        alert("회원가입에 성공하였습니다.");
-                        location.href = "/loginForm";
+                        alert("계정이 업데이트 되었습니다.");
+                        location.href = "/sportsForm";
                     },
                     error: function(request, status, error) {
                         console.log("code: " + request.status);
                         console.log("message: " + request.responseText);
                         console.log("error: " + error);
-                        alert("서버 오류 발생");
                     }
                 });
             } else {
@@ -247,50 +234,9 @@
         // 취소 버튼
         $("#btnDel").click(function() {
             if (confirm("로그인 화면으로 돌아가겠습니까?")) {
-                location.href = '/loginForm';
+                location.href = '/sportsForm';
             }
         });
+
     });
-
-    // 공백 확인 함수
-    function checkExistData(value, dataName) {
-        if (value === "") {
-            alert(dataName + "을(를) 입력해주세요!");
-            return false;
-        }
-        return true;
-    }
-
-    // 아이디 중복 확인
-    function doubleChk() {
-        var userId = joinForm.userId.value.trim();
-        if (userId === "") {
-            alert("아이디를 먼저 입력해주세요.");
-            return;
-        }
-
-        $.ajax({
-            url: "/idCheck",
-            type: "post",
-            data: {"userId": userId},
-            dataType: 'text',
-            success: function(cnt) {
-                console.log(cnt);
-                if (cnt === "0") {
-                    alert("사용 가능한 아이디입니다.");
-                    idck = 1;
-                } else {
-                    alert("아이디가 존재합니다. 다른 아이디를 입력해주세요.");
-                    idck = 2;
-                    $("#userId").val('').focus();
-                }
-            },
-            error: function(request, status, error) {
-                console.log("code: " + request.status);
-                console.log("message: " + request.responseText);
-                console.log("error: " + error);
-                alert("서버 오류 발생");
-            }
-        });
-    }
 </script>

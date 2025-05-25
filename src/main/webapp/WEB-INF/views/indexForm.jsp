@@ -27,20 +27,20 @@
             <c:when test="${formType eq 'join'}">
                 <%@ include file="joinForm.jsp" %>
             </c:when>
-            <c:when test="${formType eq 'train'}">
-                <%@ include file="train.jsp" %>
+            <c:when test="${formType eq 'sportsForm'}">
+                <%@ include file="sportsForm.jsp" %>
             </c:when>
-            <c:when test="${formType eq 'sports'}">
-                <%@ include file="sports.jsp" %>
+            <c:when test="${formType eq 'trainForm'}">
+                <%@ include file="trainForm.jsp" %>
             </c:when>
             <c:when test="${formType eq 'reservation'}">
                 <%@ include file="reservationForm.jsp" %>
             </c:when>
-            <c:when test="${formType eq 'main'}">
-                <%@ include file="mainForm.jsp" %>
+            <c:when test="${formType eq 'myPage'}">
+                <%@ include file="myPage.jsp" %>
             </c:when>
             <c:otherwise>
-                <%@ include file="mainForm.jsp" %>
+                <%@ include file="sportsForm.jsp" %>
             </c:otherwise>
         </c:choose>
     </div>

@@ -3,13 +3,19 @@ package com.pj.ticket.dao;
 import com.pj.ticket.vo.TicketVo;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface TicketDAO {
-/*
     void saveJoinForm(TicketVo vo) throws Exception;
-*/
 
     int idCheck(String userId) throws Exception;
 
-    int userChk(TicketVo vo);
+    TicketVo userChk(TicketVo vo);
+
+    TicketVo findUserById(String userId);
+
+    void updateUser(TicketVo vo) throws Exception;
+
+    List<TicketVo> searchTickets(TicketVo vo);
 }

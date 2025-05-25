@@ -7,27 +7,68 @@
         FROM users
         WHERE userId = #{userId}
     </select>
-<!--
-    <insert id="saveJoinForm" parameterType="TicketVo">
-        INSERT INTO users(userId, password, email, BIRTHDAY, name, point, phone, createdAt, updatedAt)
+
+    <insert id="saveJoinForm" parameterType="com.pj.ticket.vo.TicketVo">
+        INSERT INTO users(userId, password, userName, telno, point, createdAt, updatedAt, birtyD)
         VALUES(
                 #{userId}
               , #{userPw}
-              , #{email}
-              , #{birtyD}
-              , #{name}
-              , 0
+              , #{userName}
               , #{telNo}
-              , SYSDATE
-              , SYSDATE
-              )
+              , 0
+              , sysdate()
+              , sysdate()
+              , #{birtyD}
+          )
     </insert>
--->
 
-    <select id="userChk" parameterType="com.pj.ticket.vo.TicketVo" resultType="Integer">
-        SELECT count(*)
+
+    <select id="userChk" parameterType="com.pj.ticket.vo.TicketVo" resultType="com.pj.ticket.vo.TicketVo">
+        SELECT userId, password, userName, telno, point, createdAt, updatedAt, birtyD
         FROM users
         WHERE userId = #{userId} AND password = #{userPw}
+    </select>
+
+    <select id="findUserById" parameterType="String" resultType="com.pj.ticket.vo.TicketVo">
+        SELECT  userId, password, userName, telno, point, createdAt, updatedAt, birtyD
+        FROM users
+        WHERE userId = #{userId}
+    </select>
+
+
+    <update id="updateUser" parameterType="com.pj.ticket.vo.TicketVo">
+        UPDATE users
+        SET
+            updatedAt = sysdate()
+            <if test="userPw != null and userPw != ''">
+                , password = #{userPw}
+            </if>
+            <if test="userName != null and userName != ''">
+                , userName = #{userName}
+            </if>
+        WHERE userId = #{userId}
+    </update>
+
+    <select id="searchTickets" parameterType="com.pj.ticket.vo.TicketVo" resultType="com.pj.ticket.vo.TicketVo">
+        SELECT
+            b.bookId,
+            u.userName AS userName,
+            bs.name AS ticketName,
+            bs.ticketType AS ticketType,
+            bs.description AS description,
+            b.status as status,
+            b.usedDt AS usedDt
+        FROM
+            book b
+                JOIN
+            Users u ON b.userId = u.userId
+                JOIN
+            seatprice sp ON b.seatId = sp.seatPriceId
+                JOIN
+            book_show bs ON sp.ticketId = bs.ticketId
+        WHERE 1=1
+            AND b.usedDt BETWEEN #{startDate} AND #{endDate}
+            AND u.userId = #{userId};
     </select>
 
 </mapper>

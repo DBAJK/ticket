@@ -102,6 +102,43 @@
         cursor: pointer;
         font-weight: bold;
     }
+
+    .user-dropdown {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .user-name {
+        font-weight: bold;
+    }
+
+    .dropdown-toggle {
+        margin-left: 4px;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: white;
+        border: 1px solid #ccc;
+        box-shadow: 0px 4px 6px rgba(0,0,0,0.1);
+        z-index: 1000;
+        min-width: 120px;
+    }
+
+    .dropdown-item {
+        display: block;
+        padding: 8px 12px;
+        text-decoration: none;
+        color: black;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f0f0f0;
+    }
+
 </style>
 <div id="header" class="header">
     <div class="header-left">
@@ -117,25 +154,42 @@
 </div>
 
 <script>
-    // 로그인 여부 확인 (예: 세션에서 확인)
-    const isLoggedIn = false; // true일 경우 사용자 이름 표시
+    // JSP에서 세션 값 전달
+    const userName = '<c:out value="${sessionScope.userName}" default="" />';
+    const isLoggedIn = userName !== '';
 
     const userSection = document.getElementById('user-section');
     if (isLoggedIn) {
         userSection.innerHTML = `
-<!--
-            <span class="user-icon"><img src="user_icon.png" alt="user"/></span>
--->
-            <span class="user-name">홍길동<span>▼</span></span>
+            <div class="user-dropdown">
+                <span class="dropdown-toggle"><span class="user-name">\${userName}  ▼</span></span>
+                <div class="dropdown-menu" style="display: none;">
+                    <a href="/myPage" class="dropdown-item">마이페이지</a>
+                    <a href="/logout" class="dropdown-item">로그아웃</a>
+                </div>
+            </div>
         `;
     } else {
         userSection.innerHTML = `
             <button class="login-button" onclick="location.href='/loginForm'">로그인</button>
         `;
     }
+    // 이벤트 위임 방식 사용
+    document.addEventListener("click", function(e) {
+        const toggle = document.querySelector('.dropdown-toggle');
+        const menu = document.querySelector('.dropdown-menu');
+        if (!toggle || !menu) return;
+
+        if (toggle.contains(e.target)) {
+            // 토글 누르면 메뉴 보이기/숨기기
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        } else if (!menu.contains(e.target)) {
+            // 바깥 클릭 시 닫기
+            menu.style.display = 'none';
+        }
+    });
 
     document.querySelector('.header-left').onclick = function() {
-        window.location.href = '/mainForm';
+        window.location.href = '/sportsForm';
     };
-
 </script>

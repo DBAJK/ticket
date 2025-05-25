@@ -8,8 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.*;
 
 @Controller
 public class ticketController {
@@ -27,11 +27,6 @@ public class ticketController {
         model.addAttribute("formType", formType);
         return "indexForm"; // => indexForm.jsp 출력
     }
-
-    @GetMapping("/mainForm")
-    public String mainRedirect() {
-        return "redirect:/?formType=main";
-    }
     // 별도 URL을 통한 접근도 허용하려면 redirect 사용 가능
     @GetMapping("/loginForm")
     public String loginRedirect() {
@@ -43,14 +38,14 @@ public class ticketController {
         return "redirect:/?formType=join";
     }
 
-    @GetMapping("/sports")
+    @GetMapping("/sportsForm")
     public String sportsRedirect() {
-        return "redirect:/?formType=sports";
+        return "redirect:/?formType=sportsForm";
     }
 
-    @GetMapping("/train")
+    @GetMapping("/trainForm")
     public String trainRedirect() {
-        return "redirect:/?formType=train";
+        return "redirect:/?formType=trainForm";
     }
 
     @GetMapping("/reservationForm")
@@ -58,9 +53,13 @@ public class ticketController {
         return "redirect:/?formType=reservation";
     }
 
+    @GetMapping("/myPage")
+    public String myPageRedirect() {
+        return "redirect:/?formType=myPage";
+    }
 
-/*
-    @RequestMapping("/saveJoinForm.do")
+
+    @RequestMapping("/saveJoinForm")
     @ResponseBody
     public void saveJoinForm(TicketVo vo){
         try {
@@ -70,7 +69,6 @@ public class ticketController {
             e.printStackTrace();
         }
     }
-*/
 
     @RequestMapping("/idCheck")
     @ResponseBody
@@ -89,20 +87,121 @@ public class ticketController {
         return cnt;
     }
 
+    // 로그인 하기
     @RequestMapping(value = "/service/loginForm")
     @ResponseBody
     public String loginCheck(HttpServletRequest request, TicketVo vo) {
-        String userIdChk = request.getParameter("userId");
         String loginId="";
-        vo.setUserId(userIdChk);
+        vo.setUserId(request.getParameter("userId"));
         vo.setUserPw(request.getParameter("userPw"));
-        int userChk = ticketService.userChk(vo);
+        TicketVo userChk = ticketService.userChk(vo);
         HttpSession session = request.getSession();
 
-        if(userChk == 1){
+        if(userChk != null){
             loginId = "loginOk";
-            session.setAttribute("userId", userIdChk);
+            session.setAttribute("userId", vo.getUserId());
+            session.setAttribute("userName", userChk.getUserName());
         }
         return loginId;
     }
+
+    //로그아웃
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false); // 존재하는 세션만 가져옴
+        if (session != null) {
+            session.invalidate(); // 세션 무효화
+        }
+        return "redirect:/sportsForm"; // 로그아웃 후 메인으로 이동
+    }
+
+
+    @GetMapping("/myPageInfo")
+    @ResponseBody
+    public Map<String, Object> myPageInfo(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        Map<String, Object> map = new HashMap<>();
+        if (session != null && session.getAttribute("userId") != null){
+            String userId = (String) session.getAttribute("userId");
+            TicketVo user = ticketService.findUserById(userId);  // DAO 통해 정보 조회
+            map.put("status", "success");
+            map.put("userId", user.getUserId());
+            map.put("userName", user.getUserName());
+            map.put("phone", user.getTelNo());
+            map.put("point", user.getPoint());
+            map.put("birthday", user.getBirtyD());
+        } else {
+            map.put("status", "fail");
+            map.put("message", "로그인 정보가 없습니다.");
+        }
+        return map;
+    }
+
+    @RequestMapping("/updateUsersInfo")
+    @ResponseBody
+    public void updateUsersInfo(HttpServletRequest request, TicketVo vo){
+        HttpSession session = request.getSession();
+        try {
+            vo.setUserId(request.getParameter("userId"));
+            vo.setUserPw(request.getParameter("userPw"));
+            vo.setUserName(request.getParameter("userName"));
+            ticketService.updateUser(vo);
+            session.setAttribute("userName", request.getParameter("userName"));
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping(value = "/reservation/search", method = RequestMethod.GET)
+    @ResponseBody
+    public List<TicketVo> searchReservations(
+            @RequestParam String startDate,
+            @RequestParam String endDate,
+            HttpServletRequest request,
+            TicketVo vo
+    ) {
+
+        HttpSession session = request.getSession(false);
+
+        String userId = (String) session.getAttribute("userId");
+        vo.setUserId(userId);
+        vo.setStartDate(startDate);
+        vo.setEndDate(endDate);
+
+        // DB에서 티켓 목록 조회
+        List<TicketVo> resultList = ticketService.searchTickets(vo);
+
+        return resultList;
+    }
+
+
+    @GetMapping("/getTicketList")
+    @ResponseBody
+    public List<Map<String, Object>> getTicketList() {
+        List<Map<String, Object>> ticketList = new ArrayList<>();
+
+        // 첫 번째 경기
+        Map<String, Object> ticket1 = new HashMap<>();
+        ticket1.put("matchDate", "2025-06-06"); // 경기일시 (ISO 형식)
+        ticket1.put("stadium", "KIA 챔피언스필드");
+        ticket1.put("openDate", "2025-05-30"); // 예매 오픈일시
+
+        // 홈팀 정보
+        Map<String, Object> homeTeam = new HashMap<>();
+        homeTeam.put("name", "KIA Tigers");
+        homeTeam.put("logo", "WEB-INF/resources/images/kiaTigers.jpg"); // 실제 경로로 수정
+        ticket1.put("homeTeam", homeTeam);
+
+        // 원정팀 정보
+        Map<String, Object> awayTeam = new HashMap<>();
+        awayTeam.put("name", "Hanwha Eagles");
+        awayTeam.put("logo", "WEB-INF/resources/images/ssgLanders.png"); // 실제 경로로 수정
+        ticket1.put("awayTeam", awayTeam);
+
+        ticketList.add(ticket1);
+
+        return ticketList;
+    }
+
 }

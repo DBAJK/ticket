@@ -22,7 +22,7 @@
             data : params,
             success : function(data){
                 if(data == "loginOk"){
-                    location.href = '/mainForm';
+                    location.href = '/sportsForm';
                 } else {
                     alert("로그인에 실패하였습니다.\nID와 비밀번호를 확인해주세요.");
                 }
@@ -64,7 +64,7 @@
             <input type="text" id="userId" name="userId" placeholder="ID" /><br/>
             <input type="password" id="userPw" name="userPw" placeholder="PASSWORD" /><br/>
             <div style="margin-bottom:20px; color:#888;">
-                <a href="joinForm" >회원 가입</a>
+                <a href="joinForm" >회원가입</a>
             </div>
             <button type="button" onclick="loginChk();" style="width:100%; height:45px; background:#4a5cc6; color:#fff; font-size:20px; border:none; border-radius:5px;">Login</button>
         </form>

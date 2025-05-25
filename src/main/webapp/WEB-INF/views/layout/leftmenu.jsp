@@ -13,10 +13,10 @@
         <span style="font-size:18px; color:#888; margin-left:15px;">Menu</span>
     </div>
     <div style="margin-bottom:30px; color:#bbb; margin-left:30px;">
-        <a href="/sports" style="font-size:30px; color:#bbb; text-decoration: none;">Sports</a>
+        <a href="/sportsForm" style="font-size:30px; color:#bbb; text-decoration: none;">Sports</a>
     </div>
     <div style="margin-bottom:30px; color:#bbb; margin-left:30px;">
-        <a href="/train" style="font-size:30px; color:#bbb; text-decoration: none;">Train</a>
+        <a href="/trainForm" style="font-size:30px; color:#bbb; text-decoration: none;">Train</a>
     </div>
     <hr>
     <div style="margin-top:15px; margin-left:30px;">
