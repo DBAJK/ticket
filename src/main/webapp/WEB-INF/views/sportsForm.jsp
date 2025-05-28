@@ -188,10 +188,8 @@
         <div class="ticket-cards open-tickets"></div>
         <div class="ticket-cards wait-tickets" style="display:none;"></div>
     </div>
-<%--
-    <img src="/resources/images/test1.png">
---%>
 
+    <img src="${pageContext.request.contextPath}/resources/images/a.jpg" />
 </div>
 <script>
     // 탭 클릭 이벤트
@@ -220,17 +218,26 @@
     });
 
     // 예시용 슬라이드 데이터 (이미지 경로 또는 텍스트)
-    const contextPath = '<%= request.getContextPath() %>';
+    const contextPath = '${pageContext.request.contextPath}';
     const slides = [
-        `${contextPath}/images/a.jpg`,
-        `${contextPath}/images/b.jpg`,
-        `${contextPath}/images/c.jpg`
+        '/resources/images/a.jpg',
+        '/resources/images/b.jpg',
+        '/resources/images/c.jpg'
     ];
+
     let currentSlide = 0;
 
     function showSlide(idx) {
+        if (idx < 0 || idx >= slides.length) {
+            console.error("슬라이드 인덱스가 범위를 벗어났습니다.");
+            return;
+        }
         const slider = document.getElementById('sliderImage');
-        slider.innerHTML = `<img src="${slides[idx]}" alt="슬라이드 이미지" style="width: 100%; height: 100%; object-fit: cover;">`;
+        slider.innerHTML = `
+            <img src=" ${'${slides[idx]}'}"
+                 alt="슬라이드 이미지"
+                 style="width: 100%; height: 100%; object-fit: cover;">
+        `;
         document.getElementById('slideIndex').textContent = idx + 1;
         document.getElementById('slideTotal').textContent = slides.length;
     }

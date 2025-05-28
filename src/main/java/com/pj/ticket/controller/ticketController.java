@@ -190,13 +190,15 @@ public class ticketController {
         // 홈팀 정보
         Map<String, Object> homeTeam = new HashMap<>();
         homeTeam.put("name", "KIA Tigers");
-        homeTeam.put("logo", "WEB-INF/resources/images/kiaTigers.jpg"); // 실제 경로로 수정
+/*
+        homeTeam.put("logo", "images/kiaTigers.jpg"); // 실제 경로로 수정
+*/
         ticket1.put("homeTeam", homeTeam);
 
         // 원정팀 정보
         Map<String, Object> awayTeam = new HashMap<>();
         awayTeam.put("name", "Hanwha Eagles");
-        awayTeam.put("logo", "WEB-INF/resources/images/ssgLanders.png"); // 실제 경로로 수정
+        /*awayTeam.put("logo", "images/ssgLanders.png"); // 실제 경로로 수정*/
         ticket1.put("awayTeam", awayTeam);
 
         ticketList.add(ticket1);
