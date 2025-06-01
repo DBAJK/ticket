@@ -43,6 +43,11 @@ public class ticketController {
         return "redirect:/?formType=sportsForm";
     }
 
+    @GetMapping("popup/sportsPopup")
+    public String sportsPopupRedirect() {
+        return "popup/sportsPopup";
+    }
+
     @GetMapping("/trainForm")
     public String trainRedirect() {
         return "redirect:/?formType=trainForm";
@@ -57,7 +62,6 @@ public class ticketController {
     public String myPageRedirect() {
         return "redirect:/?formType=myPage";
     }
-
 
     @RequestMapping("/saveJoinForm")
     @ResponseBody
@@ -178,32 +182,36 @@ public class ticketController {
 
     @GetMapping("/getTicketList")
     @ResponseBody
-    public List<Map<String, Object>> getTicketList() {
+    public List<Map<String, Object>> getTicketList(TicketVo vo) {
         List<Map<String, Object>> ticketList = new ArrayList<>();
 
-        // 첫 번째 경기
-        Map<String, Object> ticket1 = new HashMap<>();
-        ticket1.put("matchDate", "2025-06-06"); // 경기일시 (ISO 형식)
-        ticket1.put("stadium", "KIA 챔피언스필드");
-        ticket1.put("openDate", "2025-05-30"); // 예매 오픈일시
+        List<TicketVo> dbTickets = ticketService.getAllTickets(vo); // 서비스 계층에서 DB 조회
 
-        // 홈팀 정보
-        Map<String, Object> homeTeam = new HashMap<>();
-        homeTeam.put("name", "KIA Tigers");
-/*
-        homeTeam.put("logo", "images/kiaTigers.jpg"); // 실제 경로로 수정
-*/
-        ticket1.put("homeTeam", homeTeam);
+        for (TicketVo ticket : dbTickets) {
+            Map<String, Object> ticketMap = new HashMap<>();
+            ticketMap.put("matchDate", ticket.getStartDate());      // 예: "2025-06-06T18:30"
+            ticketMap.put("openDate", ticket.getOpenDate());        // 예: "2025-05-30T10:00"
+            ticketMap.put("stadium", ticket.getPlaceName());
 
-        // 원정팀 정보
-        Map<String, Object> awayTeam = new HashMap<>();
-        awayTeam.put("name", "Hanwha Eagles");
-        /*awayTeam.put("logo", "images/ssgLanders.png"); // 실제 경로로 수정*/
-        ticket1.put("awayTeam", awayTeam);
+            ticketMap.put("homeTeamName", ticket.getHomeTeam());
+            ticketMap.put("homeTeamLogo", ticket.getHomeTeamLogo());
 
-        ticketList.add(ticket1);
+            ticketMap.put("awayTeamName", ticket.getAwayTeam());
+            ticketMap.put("awayTeamLogo", ticket.getAwayTeamLogo());
+
+            ticketList.add(ticketMap);
+        }
+
 
         return ticketList;
+    }
+
+    @RequestMapping(value = "/api/matchSeat")
+    @ResponseBody
+    public List<TicketVo> ticketPopupSeat(@RequestParam("placeId") String placeId, TicketVo vo) {
+
+        List<TicketVo> dbTicketSeats = ticketService.ticketPopupSeat(placeId);
+        return dbTicketSeats;
     }
 
 }

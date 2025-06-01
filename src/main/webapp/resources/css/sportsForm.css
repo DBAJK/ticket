@@ -1,0 +1,315 @@
+.main-content-area {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    width: 100%;
+}
+
+.main-slider {
+    position: relative;
+    width: 100%;
+    height: 50%;
+    margin-bottom: 30px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slider-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #d3d3d3;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #888;
+    position: relative;
+    z-index: 1;
+}
+
+.arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    border: 1.5px solid #d0d2d8;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    font-size: 1.5rem;
+    color: #4a5cc6;
+    cursor: pointer;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    transition: background 0.2s;
+}
+
+.arrow.left {
+    left: 12px;
+}
+
+.arrow.right {
+    right: 12px;
+}
+
+.arrow:hover {
+    background: #f5f6fa;
+}
+
+.slider-pagination {
+    position: absolute;
+    left: 24px;
+    bottom: 16px;
+    background: rgba(255,255,255,0.8);
+    padding: 2px 10px;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #444;
+    z-index: 2;
+    font-weight: bold;
+}
+
+.ticket-section {
+    width: 100%;
+}
+
+.ticket-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 16px;
+}
+
+.open-title {
+    font-weight: bold;
+    color: #3653c6;
+    font-size: 1.1rem;
+    margin-right: 10px;
+}
+
+.wait-title {
+    color: #b0b5c1;
+    font-size: 1.1rem;
+    margin-right: auto;
+}
+
+.nav-btns button {
+    background: #f5f6fa;
+    border: 1px solid #d0d2d8;
+    border-radius: 4px;
+    width: 28px;
+    height: 28px;
+    margin-left: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.ticket-cards {
+    display: flex;
+    gap: 18px;
+}
+.ticket-card {
+    width: 300px;
+    height: 350px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 16px;
+    margin-bottom: 16px;
+    background: #f5f6fa;
+    padding-bottom: 18px;
+    box-sizing: border-box;
+}
+.teams-row img {
+    border-radius: 50%;
+    background: #f5f5f5;
+}
+
+.ticket-card button {
+    width: 90%;
+    height: 36px;
+    background: #3653c6;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.ticket-card button:disabled {
+    background: #ccc;
+    color: #888;
+    cursor: not-allowed;
+}
+
+.swiper-slide {
+    -webkit-flex-shrink: 0;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    -webkit-transition-property: -webkit-transform;
+    transition-property: -webkit-transform;
+    -o-transition-property: transform;
+    -o-transition-property: -o-transform;
+    transition-property: transform;
+    transition-property: transform, -webkit-transform, -o-transform;
+    transition-property: transform, -webkit-transform;
+}
+.match_card {
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 60px;
+    width: 353px;
+    height: 330px;
+    border: 1px solid #ecedf2;
+    border-radius: 10px;
+    text-align: center;
+    -webkit-box-shadow: 0px 17px 21px rgba(0, 0, 0, .04);
+    box-shadow: 0px 17px 21px rgba(0, 0, 0, .04);
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.match_card_visual {
+    position: relative;
+    height: 163px;
+}
+
+.match_card_visual .match_team_group {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.match_card_visual .match_team_img {
+    width: 100px;
+    height: 100px;
+    vertical-align: top;
+    padding: 10px;
+}
+
+.match_card_visual .icon_versus {
+    width: 40px;
+    height: 40px;
+    margin: 0 20px;
+}
+
+.common_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    font-size: 30px;
+
+    line-height: 1;
+    vertical-align: middle;
+    color: #6189e0; /* 검정 */
+/*    font-weight: bold; /* 'vs' 강조 */
+}
+
+.match_card_info {
+    position: relative;
+    padding: 16px 20px 11px 20px;
+    color: #242428;
+}
+.match_card_info::before {
+    position: absolute;
+    top: 0;
+    left: 17px;
+    right: 17px;
+    height: 1px;
+    background: #ecedf2;
+    content: "";
+}
+
+.match_card_date {
+    display: block;
+    font-size: 18px;
+    line-height: 26px;
+}
+
+.match_card_place {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 3px;
+    font-size: 15px;
+    line-height: 22px;
+    color: #62676c;
+}
+
+.match_card_btnarea {
+    padding: 20px;
+}
+
+.common_btn_box {
+    display: flex;
+    justify-content: center; /* 수평 중앙 정렬 */
+    align-items: center;      /* 수직 중앙 정렬 */
+    gap: 6px;
+}
+
+.common_btn {
+    margin: 0;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 28px;
+    width: 100%;
+    height: 48px;
+    letter-spacing: -0.04em;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    padding: 0 24px; /* 너비를 적당히 주기 위해 padding 사용 */
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.common_btn.btn_primary {
+    background-color: #4a5cc6;
+    border: 1px solid #4a5cc6;
+    color: #fff;
+}
+
+.common_btn.btn_primary:hover,
+.common_btn.btn_primary:focus {
+    background-color: #3c4db8;
+    border-color: #3c4db8;
+}
+
+.common_btn.btn_primary:disabled,
+.common_btn.btn_primary[aria-disabled="true"] {
+    background-color: #e4e6e8;
+    border-color: #e4e6e8;
+    color: #a7acb6;
+    pointer-events: none;
+}

@@ -68,7 +68,33 @@
             book_show bs ON sp.ticketId = bs.ticketId
         WHERE 1=1
             AND b.usedDt BETWEEN #{startDate} AND #{endDate}
-            AND u.userId = #{userId};
+            AND u.userId = #{userId}
     </select>
 
+
+    <select id="searchMatchCard" parameterType="com.pj.ticket.vo.TicketVo" resultType="com.pj.ticket.vo.TicketVo">
+        SELECT ticketId
+             , placeId
+             , placeName
+             , ticketName
+             , description
+             , ticketType
+             , homeTeam
+             , homeTeamLogo
+             , awayTeam
+             , awayTeamLogo
+             , startDate
+             , openDate
+        FROM book_show
+        WHERE 1=1
+    </select>
+
+    
+    <select id="ticketPopupSeat" parameterType="String" resultType="com.pj.ticket.vo.TicketVo">
+        SELECT bs.ticketId, bs.ticketName, bs.startDate, bs.homeTeamLogo
+             , p.placeId, p.placeName, p.address, p.seatZone, p.seatRow, p.seatCol
+        FROM book_show bs
+            LEFT JOIN place p on bs.placeId = p.placeId
+        WHERE p.placeId = #{placeId}
+    </select>
 </mapper>

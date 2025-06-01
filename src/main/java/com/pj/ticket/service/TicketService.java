@@ -40,4 +40,12 @@ public class TicketService {
         return ticketDAO.searchTickets(vo);
     }
 
+    public List<TicketVo> getAllTickets(TicketVo vo){
+        return ticketDAO.searchMatchCard(vo);
+    }
+
+    public List<TicketVo> ticketPopupSeat(String placeId){
+        return ticketDAO.ticketPopupSeat(placeId);
+    }
+
 }

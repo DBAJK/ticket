@@ -18,4 +18,8 @@ public interface TicketDAO {
     void updateUser(TicketVo vo) throws Exception;
 
     List<TicketVo> searchTickets(TicketVo vo);
+
+    List<TicketVo> searchMatchCard(TicketVo vo);
+
+    List<TicketVo> ticketPopupSeat(String placeId);
 }

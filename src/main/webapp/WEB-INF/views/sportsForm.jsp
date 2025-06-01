@@ -12,158 +12,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-<style>
-    .main-content-area {
-        background: #fff;
-        border-radius: 12px;
-        padding: 20px;
-        width: 100%;
-    }
-
-    .main-slider {
-        position: relative;
-        width: 100%;
-        height: 55%;
-        margin-bottom: 30px;
-        background: transparent;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .slider-placeholder {
-        width: 100%;
-        height: 100%;
-        background: #d3d3d3;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        color: #888;
-        position: relative;
-        z-index: 1;
-    }
-
-    .arrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: #fff;
-        border: 1.5px solid #d0d2d8;
-        border-radius: 50%;
-        width: 38px;
-        height: 38px;
-        font-size: 1.5rem;
-        color: #4a5cc6;
-        cursor: pointer;
-        z-index: 2;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-        transition: background 0.2s;
-    }
-
-    .arrow.left {
-        left: 12px;
-    }
-
-    .arrow.right {
-        right: 12px;
-    }
-
-    .arrow:hover {
-        background: #f5f6fa;
-    }
-
-    .slider-pagination {
-        position: absolute;
-        left: 24px;
-        bottom: 16px;
-        background: rgba(255,255,255,0.8);
-        padding: 2px 10px;
-        border-radius: 8px;
-        font-size: 1rem;
-        color: #444;
-        z-index: 2;
-        font-weight: bold;
-    }
-
-    .ticket-section {
-        width: 100%;
-    }
-
-    .ticket-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 16px;
-        gap: 16px;
-    }
-
-    .open-title {
-        font-weight: bold;
-        color: #3653c6;
-        font-size: 1.1rem;
-        margin-right: 10px;
-    }
-
-    .wait-title {
-        color: #b0b5c1;
-        font-size: 1.1rem;
-        margin-right: auto;
-    }
-
-    .nav-btns button {
-        background: #f5f6fa;
-        border: 1px solid #d0d2d8;
-        border-radius: 4px;
-        width: 28px;
-        height: 28px;
-        margin-left: 4px;
-        cursor: pointer;
-        font-size: 1rem;
-    }
-
-    .ticket-cards {
-        display: flex;
-        gap: 18px;
-    }
-    .ticket-card {
-        width: 300px;
-        height: 350px;
-        border: 1px solid #eee;
-        border-radius: 12px;
-        display: flex;
-        align-items: flex-end;
-        justify-content: center;
-        padding: 16px;
-        margin-bottom: 16px;
-        background: #f5f6fa;
-        padding-bottom: 18px;
-        box-sizing: border-box;
-    }
-    .teams-row img {
-        border-radius: 50%;
-        background: #f5f5f5;
-    }
-
-    .ticket-card button {
-        width: 90%;
-        height: 36px;
-        background: #3653c6;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    .ticket-card button:disabled {
-        background: #ccc;
-        color: #888;
-        cursor: not-allowed;
-    }
-
-</style>
+<link href="/resources/css/sportsForm.css" rel="stylesheet" type="text/css">
 <div class="main-content-area">
     <div class="main-slider">
         <!-- 슬라이드/배너 이미지 또는 콘텐츠 (예시로 회색 박스) -->
@@ -185,32 +34,36 @@
                 <button>&gt;</button>
             </div>
         </div>
-        <div class="ticket-cards open-tickets"></div>
-        <div class="ticket-cards wait-tickets" style="display:none;"></div>
+        <div class="ticket-cards open-tickets"></div>       <%--예매 오픈 카드--%>
+        <div class="ticket-cards wait-tickets" style="display:none;"></div> <%--예매 대기 카드--%>
     </div>
-
-    <img src="${pageContext.request.contextPath}/resources/images/a.jpg" />
 </div>
 <script>
-    // 탭 클릭 이벤트
-    $('.open-title').on('click', function() {
-        $('.open-tickets').show();
-        $('.wait-tickets').hide();
-        // 탭 스타일 활성화 처리도 필요하면 추가
-    });
-
-    $('.wait-title').on('click', function() {
-        $('.open-tickets').hide();
-        $('.wait-tickets').show();
-        // 탭 스타일 활성화 처리도 필요하면 추가
-    });
-
     // 페이지 진입 시 기본 예매오픈 탭 보이기
     $(document).ready(function() {
         loadTickets();
+        $(document).on('click', '.reserveButton', function () { //
+            const placeId = '10010';
+            window.open('popup/sportsPopup?placeId=' + placeId, "sportsPopupForm", "width=1300,height=900");
+        });
+        // 탭 클릭 이벤트
+        $('.open-title').on('click', function() {
+            $('.open-tickets').show();
+            $('.wait-tickets').hide();
+            // 탭 스타일 활성화 처리도 필요하면 추가
+        });
+
+        $('.wait-title').on('click', function() {
+            $('.open-tickets').hide();
+            $('.wait-tickets').show();
+            // 탭 스타일 활성화 처리도 필요하면 추가
+        });
+
         $('.open-tickets').show();
         $('.wait-tickets').hide();
     });
+
+
     // 초기 표시
     document.addEventListener('DOMContentLoaded', function() {
         showSlide(currentSlide);
@@ -220,9 +73,9 @@
     // 예시용 슬라이드 데이터 (이미지 경로 또는 텍스트)
     const contextPath = '${pageContext.request.contextPath}';
     const slides = [
-        '/resources/images/a.jpg',
-        '/resources/images/b.jpg',
-        '/resources/images/c.jpg'
+        '/resources/images/homeImage.avif',
+        '/resources/images/landersField.jfif',
+        '/resources/images/eaglesPark.webp'
     ];
 
     let currentSlide = 0;
@@ -252,80 +105,104 @@
         showSlide(currentSlide);
     }
 
-
     function loadTickets() {
         $.ajax({
             url: '/getTicketList', // 티켓 리스트 API
             method: 'GET',
             dataType: 'json',
             success: function (data) {
-                const todayDate = new Date();
+                const now = new Date(); // 현재 시각
                 const openContainer = $('.open-tickets');
                 const waitContainer = $('.wait-tickets');
 
                 openContainer.empty();
                 waitContainer.empty();
+
                 data.forEach(ticket => {
-                    const matchDate = new Date(ticket.matchDate);
-                    const openDate = new Date(ticket.openDate); // 예매 오픈일
-                    const todayDate = new Date();
-                    todayDate.setHours(0, 0, 0, 0);
-                    matchDate.setHours(0, 0, 0, 0);
+                    const matchDate = new Date(ticket.matchDate); // 예: 2025-06-06T18:30
+                    const openDate = new Date(ticket.openDate);    // 오픈일시
+                    const now = new Date();
+                    const matchformatDate = formatMatchDate(matchDate);
+                    // --- 최상단 카드 컨테이너 ---
+                    const card = $('<div>').addClass('match_card');
 
-                    // 카드 전체 div
-                    const card = $('<div>').addClass('ticket-card');
+                    // --- 시각 영역: 로고 및 vs ---
+                    const visual = $('<div>').addClass('match_card_visual');
+                    const teamGroup = $('<div>').addClass('match_team_group');
 
-                    // --- 상단: 팀 로고와 vs ---
-                    const teamsDiv = $('<div>').addClass('teams-row').css({
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '10px'
-                    });
-                    const homeLogo = $('<img>').attr('src', ticket.homeTeam.logo).attr('alt', ticket.homeTeam.name).css({width: '48px', height: '48px'});
-                    const vsText = $('<span>').text('vs').css({fontWeight: 'bold', fontSize: '20px', margin: '0 8px'});
-                    const awayLogo = $('<img>').attr('src', ticket.awayTeam.logo).attr('alt', ticket.awayTeam.name).css({width: '48px', height: '48px'});
-                    teamsDiv.append(homeLogo, vsText, awayLogo);
+                    const homeImgBox = $('<div>').addClass('match_team_imgbox');
+                    const homeImg = $('<img>').addClass('match_team_img')
+                        .attr('src', ticket.homeTeamLogo)
+                        .attr('alt', ticket.homeTeamName);
+                    homeImgBox.append(homeImg);
 
-                    // --- 경기 정보 ---
-                    const infoDiv = $('<div>').addClass('match-info').css({textAlign: 'center', margin: '10px 0'});
-                    infoDiv.append(
-                        $('<div>').text(`${matchDate.toLocaleDateString('ko-KR')} (${['일','월','화','수','목','금','토'][matchDate.getDay()]}) ${ticket.matchDate.substring(11,16)}`),
-                        $('<div>').text(ticket.stadium)
+                    const vsIcon = $('<span>').addClass('common_icon icon_versus').text('vs');
+
+                    const awayImgBox = $('<div>').addClass('match_team_imgbox');
+                    const awayImg = $('<img>').addClass('match_team_img')
+                        .attr('src', ticket.awayTeamLogo)
+                        .attr('alt', ticket.awayTeamName);
+                    awayImgBox.append(awayImg);
+
+                    teamGroup.append(homeImgBox, vsIcon, awayImgBox);
+                    visual.append(teamGroup);
+
+                    // --- 경기 정보 영역 ---
+                    const info = $('<div>').addClass('match_card_info');
+                    info.append(
+                        $('<span>').addClass('match_card_date').text(matchformatDate),
+                        $('<span>').addClass('match_card_place').text(ticket.stadium)
                     );
 
-                    // --- 버튼 또는 오픈예정 안내 ---
-                    let buttonDiv;
-                    if (todayDate >= openDate) {
-                        // 예매 가능
-                        const button = $('<button>').text('예매하기');
-                        buttonDiv = $('<div>').append(button);
+                    // --- 버튼 영역 ---
+                    const btnArea = $('<div>').addClass('match_card_btnarea');
+                    const btnBox = $('<div>').addClass('common_btn_box');
+
+                    if (now >= openDate) {
+                        const reserveBtn = $('<button>')
+                            .attr('data-match-area', ticket.stadium) // 예시: 식별을 위한 데이터 속성
+                            .addClass('common_btn btn_primary btn_large plan_sale reserveButton')
+                            .text('예매하기');
+                        btnBox.append(reserveBtn);
                     } else {
-                        // 예매대기 (비활성 버튼 또는 안내)
-                        buttonDiv = $('<div>').append(
-                            $('<button>').text(`${openDate.toLocaleDateString('ko-KR')} (${['일','월','화','수','목','금','토'][openDate.getDay()]}) ${openDate.toTimeString().slice(0,5)} 오픈예정`)
-                                .prop('disabled', true)
-                                .css({background: '#eee', color: '#888', cursor: 'not-allowed', width: '100%'})
-                        );
+                        const openDateStr = formatMatchDate(openDate);
+                        const disabledBtn = $('<a>')
+                            .addClass('common_btn btn_primary btn_large plan_sale')
+                            .attr('aria-disabled', 'true')
+                            .text(openDateStr);
+                        btnBox.append(disabledBtn);
                     }
 
-                    // 카드에 요소 추가
-                    card.append(teamsDiv, infoDiv, buttonDiv);
+                    btnArea.append(btnBox);
 
-                    // openContainer, waitContainer에 분류
-                    if (todayDate >= openDate) {
-                        openContainer.append(card);
+                    // --- 카드 조립 ---
+                    card.append(visual, info, btnArea);
+
+                    // --- DOM 삽입 ---
+                    if (now >= openDate) {
+                        $('.open-tickets').append(card);
                     } else {
-                        waitContainer.append(card);
+                        $('.wait-tickets').append(card);
                     }
                 });
-
             },
             error: function (xhr, status, error) {
                 console.error('AJAX 요청 실패:', status, error);
                 alert('티켓 정보를 불러오는 데 실패했습니다.');
             }
         });
+    }
+    function formatMatchDate(dateString) {  // 날짜 변환
+        const date = new Date(dateString); // 예: "2025-06-06T18:30"
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 1월이 0이므로 +1
+        const day = String(date.getDate()).padStart(2, '0');
+        const weekday = ['일','월','화','수','목','금','토'][date.getDay()];
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const formatDate = year + '.' + month + '.' + day + '(' + weekday + ')' +  hours + ':' + minutes;
+        return formatDate;
     }
 
 </script>
