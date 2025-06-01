@@ -44,7 +44,7 @@
         loadTickets();
         $(document).on('click', '.reserveButton', function () { //
             const placeId = '10010';
-            window.open('popup/sportsPopup?placeId=' + placeId, "sportsPopupForm", "width=1300,height=900");
+            window.open('popup/sportsPopup?placeId=' + placeId, "sportsPopupForm", "width=1750,height=1200");
         });
         // 탭 클릭 이벤트
         $('.open-title').on('click', function() {

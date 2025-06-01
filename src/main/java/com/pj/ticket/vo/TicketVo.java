@@ -2,6 +2,8 @@ package com.pj.ticket.vo;
 
 import lombok.*;
 
+import java.util.List;
+
 @NoArgsConstructor @AllArgsConstructor
 @Builder(toBuilder = true)
 @Getter
@@ -38,6 +40,7 @@ public class TicketVo {
     private String awayTeamLogo;
     private String openDate;
 
+    private List<String> seats; // 좌석 배열
     private String address;
     private String seatZone;
     private String seatRow;

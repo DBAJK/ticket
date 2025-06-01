@@ -97,4 +97,9 @@
             LEFT JOIN place p on bs.placeId = p.placeId
         WHERE p.placeId = #{placeId}
     </select>
+
+    <insert id="reserveInsert" parameterType="com.pj.ticket.vo.TicketVo">
+        INSERT INTO seatprice(seatPriceId, ticketId, placeId, price, status, seatZone, seatRow, seatCol)
+        VALUES(#{seatPriceId}, #{ticketId}, #{placeId}, #{price}, 'available', #{seatZone}, #{seatRow}, #{seatCol});
+    </insert>
 </mapper>

@@ -22,4 +22,6 @@ public interface TicketDAO {
     List<TicketVo> searchMatchCard(TicketVo vo);
 
     List<TicketVo> ticketPopupSeat(String placeId);
+
+    void reserveInsert(TicketVo vo) throws Exception;
 }

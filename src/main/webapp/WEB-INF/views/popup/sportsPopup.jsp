@@ -121,7 +121,7 @@
     }
 
     .seat.unavailable {
-        background-color: #ccc;
+        background-color: #868585;
         box-shadow: none;
         cursor: not-allowed;
     }
@@ -265,12 +265,24 @@
                         .addClass('seat')
                         .addClass('available')
                         .data('seat-id', `${'${row}'}-${'${col}'}`)
+                        // .addClass(seat.available ? 'available' : 'unavailable') seat 추가하면 주석 해제
                         .text(`${'${row}'}-${'${col}'}`) // 필요 시 제거
                         .on('click', function () {
                             if (!$(this).hasClass('available')) return;
+
+                            const personCount = parseInt($('#personRange').val());
+                            const selectedCount = $('.seat.selected').length;
+
+                            if (!$(this).hasClass('selected')) {
+                                // 새로 선택하려고 할 때만 검사
+                                if (selectedCount >= personCount) {
+                                    alert('선택 인원보다 많은 좌석을 선택할 수 없습니다.');
+                                    return;
+                                }
+                            }
+
                             $(this).toggleClass('selected');
                         });
-
                     seatRowMapPerZone[zone][row].append(seatEl);
                 });
 
@@ -292,7 +304,6 @@
 
         // 인원 선택 슬라이더
         $('#personRange').on('input', function () {
-            console.log($('#personRange').val());
             $('#personCount').text($(this).val() + '인');
         });
 
@@ -305,12 +316,13 @@
                 alert('선택한 좌석 수가 인원 수와 다릅니다.');
                 return;
             }
-
+            console.log(selectedSeats);
             // 예매 요청
-            $.post('/api/reserve', {
-                matchId,
+            $.post('/api/reserveInsert', {
+                placeId,
                 seats: selectedSeats
             }, function (response) {
+                console.log(selectedSeats);
                 alert('예매 완료!');
                 // 리디렉션 또는 상태 갱신
             }).fail(function () {
@@ -318,6 +330,7 @@
             });
         });
     });
+
     function showZone(sectionId) {
         $('.seat-zone').hide();               // 모두 숨기고
         $(`#zone-${'${sectionId}'}`).show();      // 선택한 구역만 표시

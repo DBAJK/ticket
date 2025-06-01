@@ -3,6 +3,8 @@ package com.pj.ticket.controller;
 import com.pj.ticket.service.TicketService;
 import com.pj.ticket.vo.TicketVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -212,6 +214,17 @@ public class ticketController {
 
         List<TicketVo> dbTicketSeats = ticketService.ticketPopupSeat(placeId);
         return dbTicketSeats;
+    }
+
+    @PostMapping("/api/reserveInsert")
+    public ResponseEntity<?> reserveInsert(@RequestBody TicketVo vo) {
+        try {
+            ticketService.reserveInsert(vo);
+            return ResponseEntity.ok("예매 성공");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예매 실패");
+        }
     }
 
 }

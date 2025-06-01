@@ -47,5 +47,23 @@ public class TicketService {
     public List<TicketVo> ticketPopupSeat(String placeId){
         return ticketDAO.ticketPopupSeat(placeId);
     }
+    public void reserveInsert(TicketVo vo) throws Exception{
+        List<String> seats = vo.getSeats();
+        String placeId = vo.getPlaceId();
+
+        for (String seat : seats) {
+            String[] parts = seat.split("-");
+            String row = parts[0];
+            String col = parts[1];
+
+            //vo.setTicketId();
+            vo.setPlaceId(placeId);
+            vo.setSeatRow(row);
+            vo.setSeatCol(col);
+
+            ticketDAO.reserveInsert(vo);
+        }
+
+    }
 
 }
