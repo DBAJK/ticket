@@ -45,4 +45,5 @@ public class TicketVo {
     private String seatZone;
     private String seatRow;
     private String seatCol;
+    private String price;
 }

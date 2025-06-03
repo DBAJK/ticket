@@ -81,8 +81,7 @@
     }
 
     .seat-map {
-        background-color: #a7acb6;
-        border: #62676c;
+        background-color: #d6dae1;
         display: grid;
         gap: 6px;
         padding: 20px 25px 0px;
@@ -173,6 +172,8 @@
     }
 </style>
 <div class="ticket-info">
+    <input id="ticketId" disabled>
+    <input id="placeId" disabled>
     <div class="titleArea">
         <div class="match-title">
             <span id="matchTitle" class="matchTitle"></span>
@@ -217,6 +218,8 @@
             data: {'placeId' : placeId},
             success: function (data) {
                 const logoUrl = data[0].homeTeamLogo; // 예: 'https://example.com/logo.png'
+                $("#ticketId").val(data[0].ticketId);
+                $("#placeId").val(placeId);
                 if (homeTeamLogo) {
                     $("#homeTeamLogo").attr("src", logoUrl);
                 } else {
@@ -264,7 +267,7 @@
                     const seatEl = $('<span>')
                         .addClass('seat')
                         .addClass('available')
-                        .data('seat-id', `${'${row}'}-${'${col}'}`)
+                        .data('seat-id',`${'${zone}'}-${'${row}'}-${'${col}'}`)
                         // .addClass(seat.available ? 'available' : 'unavailable') seat 추가하면 주석 해제
                         .text(`${'${row}'}-${'${col}'}`) // 필요 시 제거
                         .on('click', function () {
@@ -316,17 +319,36 @@
                 alert('선택한 좌석 수가 인원 수와 다릅니다.');
                 return;
             }
-            console.log(selectedSeats);
-            // 예매 요청
-            $.post('/api/reserveInsert', {
-                placeId,
-                seats: selectedSeats
-            }, function (response) {
-                console.log(selectedSeats);
-                alert('예매 완료!');
-                // 리디렉션 또는 상태 갱신
-            }).fail(function () {
-                alert('예매 실패');
+            const requestData = {
+                placeId: placeId,
+                seats: selectedSeats,
+                ticketId: $("#ticketId").val(),
+                price: '19000'
+            };
+
+            $.ajax({
+                url: '/api/reserveInsert',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(requestData),
+                success: function (response) {
+                    alert('예매 완료!');
+                    // 페이지 리로드 또는 상태 갱신 로직
+                },
+                error: function (xhr) {
+                    if (xhr.status === 401) {
+                        alert('로그인 후 예매해주세요.'); // "로그인 후 예매해주세요."
+                        if (confirm("로그인 화면으로 이동하시겠습니까?")) {
+                            window.opener.location.href = "/loginForm"; // 부모 창 이동
+                            window.close(); // 팝업 닫기
+                        } else {
+                            window.opener.location.reload();
+                            window.close();
+                        }
+                    } else {
+                        alert('예매 실패');
+                    }
+                }
             });
         });
     });

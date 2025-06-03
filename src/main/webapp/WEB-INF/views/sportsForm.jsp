@@ -41,9 +41,11 @@
 <script>
     // 페이지 진입 시 기본 예매오픈 탭 보이기
     $(document).ready(function() {
+
         loadTickets();
         $(document).on('click', '.reserveButton', function () { //
-            const placeId = '10010';
+
+            const placeId = $(this).data('place-id');
             window.open('popup/sportsPopup?placeId=' + placeId, "sportsPopupForm", "width=1750,height=1200");
         });
         // 탭 클릭 이벤트
@@ -114,7 +116,6 @@
                 const now = new Date(); // 현재 시각
                 const openContainer = $('.open-tickets');
                 const waitContainer = $('.wait-tickets');
-
                 openContainer.empty();
                 waitContainer.empty();
 
@@ -161,6 +162,7 @@
                     if (now >= openDate) {
                         const reserveBtn = $('<button>')
                             .attr('data-match-area', ticket.stadium) // 예시: 식별을 위한 데이터 속성
+                            .attr('data-place-id', ticket.placeId)
                             .addClass('common_btn btn_primary btn_large plan_sale reserveButton')
                             .text('예매하기');
                         btnBox.append(reserveBtn);

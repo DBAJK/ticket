@@ -49,15 +49,14 @@ public class TicketService {
     }
     public void reserveInsert(TicketVo vo) throws Exception{
         List<String> seats = vo.getSeats();
-        String placeId = vo.getPlaceId();
 
         for (String seat : seats) {
             String[] parts = seat.split("-");
-            String row = parts[0];
-            String col = parts[1];
+            String zone = parts[0];
+            String row = parts[1];
+            String col = parts[2];
 
-            //vo.setTicketId();
-            vo.setPlaceId(placeId);
+            vo.setSeatZone(zone);
             vo.setSeatRow(row);
             vo.setSeatCol(col);
 

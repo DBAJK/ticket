@@ -99,7 +99,7 @@
     </select>
 
     <insert id="reserveInsert" parameterType="com.pj.ticket.vo.TicketVo">
-        INSERT INTO seatprice(seatPriceId, ticketId, placeId, price, status, seatZone, seatRow, seatCol)
-        VALUES(#{seatPriceId}, #{ticketId}, #{placeId}, #{price}, 'available', #{seatZone}, #{seatRow}, #{seatCol});
+        INSERT INTO seatprice(ticketId, placeId, price, status, seatZone, seatRow, seatCol)
+        VALUES(#{ticketId}, #{placeId}, #{price}, 'available', #{seatZone}, #{seatRow}, #{seatCol});
     </insert>
 </mapper>

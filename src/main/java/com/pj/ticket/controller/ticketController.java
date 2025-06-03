@@ -15,11 +15,8 @@ import java.util.*;
 
 @Controller
 public class ticketController {
-
-
     @Autowired(required = false)
     TicketService ticketService;
-
 
     @GetMapping("/")
     public String index(@RequestParam(value = "formType", required = false) String formType, Model model) {
@@ -65,6 +62,7 @@ public class ticketController {
         return "redirect:/?formType=myPage";
     }
 
+    // 회원가입
     @RequestMapping("/saveJoinForm")
     @ResponseBody
     public void saveJoinForm(TicketVo vo){
@@ -76,6 +74,7 @@ public class ticketController {
         }
     }
 
+    // 회원가입 아이디 체크
     @RequestMapping("/idCheck")
     @ResponseBody
     public String idCheck(@RequestParam("userId") String userId){
@@ -110,7 +109,7 @@ public class ticketController {
         }
         return loginId;
     }
-
+    
     //로그아웃
     @GetMapping("/logout")
     public String logout(HttpServletRequest request) {
@@ -121,7 +120,7 @@ public class ticketController {
         return "redirect:/sportsForm"; // 로그아웃 후 메인으로 이동
     }
 
-
+    // 내 정보 조회
     @GetMapping("/myPageInfo")
     @ResponseBody
     public Map<String, Object> myPageInfo(HttpServletRequest request) {
@@ -143,6 +142,7 @@ public class ticketController {
         return map;
     }
 
+    // 정보 수정
     @RequestMapping("/updateUsersInfo")
     @ResponseBody
     public void updateUsersInfo(HttpServletRequest request, TicketVo vo){
@@ -159,6 +159,7 @@ public class ticketController {
         }
     }
 
+    //예약 정보 조회
     @RequestMapping(value = "/reservation/search", method = RequestMethod.GET)
     @ResponseBody
     public List<TicketVo> searchReservations(
@@ -181,7 +182,7 @@ public class ticketController {
         return resultList;
     }
 
-
+    // sportsForm 티켓 정보 가져오기 
     @GetMapping("/getTicketList")
     @ResponseBody
     public List<Map<String, Object>> getTicketList(TicketVo vo) {
@@ -194,6 +195,7 @@ public class ticketController {
             ticketMap.put("matchDate", ticket.getStartDate());      // 예: "2025-06-06T18:30"
             ticketMap.put("openDate", ticket.getOpenDate());        // 예: "2025-05-30T10:00"
             ticketMap.put("stadium", ticket.getPlaceName());
+            ticketMap.put("placeId", ticket.getPlaceId());
 
             ticketMap.put("homeTeamName", ticket.getHomeTeam());
             ticketMap.put("homeTeamLogo", ticket.getHomeTeamLogo());
@@ -208,6 +210,7 @@ public class ticketController {
         return ticketList;
     }
 
+    // 경기장, 기차 열차 예매 좌석 가져오기
     @RequestMapping(value = "/api/matchSeat")
     @ResponseBody
     public List<TicketVo> ticketPopupSeat(@RequestParam("placeId") String placeId, TicketVo vo) {
@@ -216,11 +219,19 @@ public class ticketController {
         return dbTicketSeats;
     }
 
+    // sportsForm 예약하기
     @PostMapping("/api/reserveInsert")
-    public ResponseEntity<?> reserveInsert(@RequestBody TicketVo vo) {
+    public ResponseEntity<?> reserveInsert(HttpServletRequest request, @RequestBody TicketVo vo) {
         try {
-            ticketService.reserveInsert(vo);
-            return ResponseEntity.ok("예매 성공");
+            HttpSession session = request.getSession();
+            String userId = (String) session.getAttribute("userId");
+            if(userId != "" && userId != null){
+                vo.setUserId(userId);
+                ticketService.reserveInsert(vo);
+                return ResponseEntity.ok("예매 성공");
+            }else{
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 후 예매해주세요.");
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예매 실패");
