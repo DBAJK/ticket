@@ -166,11 +166,16 @@
                     <button type="button" onclick="setPeriod(90)">3개월</button>
                     <span class="info-text">3개월 이전의 내역은 자동 삭제됩니다.</span>
                 </div>
+                <div class="ticket-type-select" style="margin: 10px 0;">
+                    <label><input type="radio" name="ticketType" value="" checked> 전체</label>
+                    <label><input type="radio" name="ticketType" value="sports"> 스포츠경기</label>
+                    <label><input type="radio" name="ticketType" value="train"> 기차</label>
+                </div>
                 <div class="date-inputs">
                     <input type="date" id="startDate" class="date-input">
                     <span class="tilde">~</span>
                     <input type="date" id="endDate" class="date-input">
-                    <button class="search-btn" onclick="searchReservations()">조회하기</button>
+                    <button class="search-btn" onclick="searchReservations();">조회하기</button>
                 </div>
             </div>
         </div>
@@ -182,8 +187,7 @@
             <th>티켓 이름</th>
             <th>티켓 확인</th>
             <th>분류</th>
-            <th>기타</th>
-            <th>상태</th>
+            <th>예약상태</th>
             <th>사용일</th>
         </tr>
         </thead>
@@ -194,8 +198,14 @@
 </body>
 <script>
     $(document).ready(function () {
+
         setPeriod(1);
         searchReservations();
+        $(document).on('click', '.check-link', function () {
+            const ticketId = $(this).data('ticket-id');
+            window.open('popup/reservationChk?ticketId=' + ticketId, "reservationChk", "width=650,height=900");
+
+        });
     });
     function setPeriod(days) {
         const end = new Date();
@@ -213,10 +223,11 @@
     function searchReservations() {
         const startDate = $('#startDate').val();
         const endDate = $('#endDate').val();
+        const ticketType = $('input[name="ticketType"]:checked').val(); // ← 이 부분이 핵심
         $.ajax({
             url: '/reservation/search',
             type: 'GET',
-            data: { startDate, endDate },
+            data: { startDate, endDate, ticketType },
             success: function (data) {
                 const tbody = $('#resultTable');
                 tbody.empty();
@@ -227,14 +238,17 @@
                 }
 
                 data.forEach(ticket => {
-                    const row = '<tr>' +
-                        '<td>' + ticket.ticketName + '</td>' +
-                        '<td><a class="check-link" href="#">티켓 확인</a></td>' +
-                        '<td>' + ticket.ticketType + '</td>' +
-                        '<td>' + ticket.description + '</td>' +
-                        '<td>' + ticket.status + '</td>' +
-                        '<td>' + ticket.usedDt + '</td>' +
-                        '</tr>';
+                    const ticketTypeText = ticket.ticketType === 'sports' ? '스포츠 경기' : '기차';
+                    const statusText = ticket.status === 'completed' ? '예약' : '취소';
+                    const row = `
+                        <tr>
+                            <td>${'${ticket.ticketName}'}</td>
+                            <td><a class="check-link" href="#" data-ticket-id="${'${ticket.ticketId}'}">티켓 확인</a></td>
+                            <td>${'${ticketTypeText}'}</td>
+                            <td>${'${statusText}'}</td>
+                            <td>${'${ticket.usedDt}'}</td>
+                        </tr>`;
+
                     tbody.append(row);
                 });
             },

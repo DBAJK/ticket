@@ -57,6 +57,11 @@ public class ticketController {
         return "redirect:/?formType=reservation";
     }
 
+    @GetMapping("popup/reservationChk")
+    public String reservationChkPopupRedirect() {
+        return "popup/reservationChk";
+    }
+
     @GetMapping("/myPage")
     public String myPageRedirect() {
         return "redirect:/?formType=myPage";

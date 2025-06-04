@@ -314,6 +314,8 @@
         $('#reserveButton').on('click', function () {
             const selectedSeats = $('.seat.selected').map((i, el) => $(el).data('seat-id')).get();
             const personCount = parseInt($('#personRange').val());
+            const fullMatchDate = $("#matchDate").text();
+            const dateOnly = fullMatchDate.substring(0, 10).replace(/\./g, '-');
 
             if (selectedSeats.length !== personCount) {
                 alert('선택한 좌석 수가 인원 수와 다릅니다.');
@@ -323,9 +325,11 @@
                 placeId: placeId,
                 seats: selectedSeats,
                 ticketId: $("#ticketId").val(),
-                price: '19000'
+                price: '19000',
+                usedDt: dateOnly
             };
 
+            console.log(requestData);
             $.ajax({
                 url: '/api/reserveInsert',
                 type: 'POST',

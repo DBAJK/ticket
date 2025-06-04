@@ -35,6 +35,31 @@
         WHERE userId = #{userId}
     </select>
 
+<!-- 티켓 예약 리스트 -->
+    <select id="searchTickets" parameterType="com.pj.ticket.vo.TicketVo" resultType="com.pj.ticket.vo.TicketVo">
+        SELECT
+            sp.seatPriceId,
+            bs.ticketId,
+            u.userName AS userName,
+            bs.ticketName AS ticketName,
+            bs.ticketType AS ticketType,
+            sp.status as status,
+            sp.usedDt AS usedDt
+        FROM
+            seatprice sp
+        JOIN
+            Users u ON sp.userId = u.userId
+        JOIN
+            book_show bs ON sp.ticketId = bs.ticketId
+        WHERE 1=1
+            AND sp.usedDt BETWEEN #{startDate} AND #{endDate}
+            AND u.userId = #{userId}
+        <if test="ticketType != null and ticketType != ''">
+            AND bs.ticketType = #{ticketType}
+        </if>
+        GROUP BY sp.ticketId, u.userId, bs.placeId
+    </select>
+
 
     <update id="updateUser" parameterType="com.pj.ticket.vo.TicketVo">
         UPDATE users
@@ -48,28 +73,6 @@
             </if>
         WHERE userId = #{userId}
     </update>
-
-    <select id="searchTickets" parameterType="com.pj.ticket.vo.TicketVo" resultType="com.pj.ticket.vo.TicketVo">
-        SELECT
-            b.bookId,
-            u.userName AS userName,
-            bs.name AS ticketName,
-            bs.ticketType AS ticketType,
-            bs.description AS description,
-            b.status as status,
-            b.usedDt AS usedDt
-        FROM
-            book b
-                JOIN
-            Users u ON b.userId = u.userId
-                JOIN
-            seatprice sp ON b.seatId = sp.seatPriceId
-                JOIN
-            book_show bs ON sp.ticketId = bs.ticketId
-        WHERE 1=1
-            AND b.usedDt BETWEEN #{startDate} AND #{endDate}
-            AND u.userId = #{userId}
-    </select>
 
 
     <select id="searchMatchCard" parameterType="com.pj.ticket.vo.TicketVo" resultType="com.pj.ticket.vo.TicketVo">
@@ -99,7 +102,7 @@
     </select>
 
     <insert id="reserveInsert" parameterType="com.pj.ticket.vo.TicketVo">
-        INSERT INTO seatprice(ticketId, placeId, price, status, seatZone, seatRow, seatCol)
-        VALUES(#{ticketId}, #{placeId}, #{price}, 'available', #{seatZone}, #{seatRow}, #{seatCol});
+        INSERT INTO seatprice(ticketId, userId, placeId, price, seatZone, seatRow, seatCol, usedDt)
+        VALUES(#{ticketId}, #{userId}, #{placeId}, #{price}, #{seatZone}, #{seatRow}, #{seatCol}, #{usedDt});
     </insert>
 </mapper>

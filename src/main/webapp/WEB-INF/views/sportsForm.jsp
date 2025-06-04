@@ -17,8 +17,8 @@
     <div class="main-slider">
         <!-- 슬라이드/배너 이미지 또는 콘텐츠 (예시로 회색 박스) -->
         <button class="arrow left" onclick="prevSlide()">&#60;</button>
-        <div class="slider-placeholder" id="sliderImage">
-            <!-- 실제 이미지 또는 배너가 들어갈 자리 -->
+        <div class="slider-track" id="sliderTrack">
+            <!-- 이미지 슬라이드들이 여기 들어감 -->
         </div>
         <button class="arrow right" onclick="nextSlide()">&#62;</button>
         <div class="slider-pagination">
@@ -68,12 +68,15 @@
 
     // 초기 표시
     document.addEventListener('DOMContentLoaded', function() {
-        showSlide(currentSlide);
+        renderSlides();
         loadTickets(); // 티켓 카드 초기화
+
+        // 6초(6000ms)마다 다음 슬라이드로 자동 전환
+        setInterval(() => {
+            nextSlide();
+        }, 6000);
     });
 
-    // 예시용 슬라이드 데이터 (이미지 경로 또는 텍스트)
-    const contextPath = '${pageContext.request.contextPath}';
     const slides = [
         '/resources/images/homeImage.avif',
         '/resources/images/landersField.jfif',
@@ -82,29 +85,31 @@
 
     let currentSlide = 0;
 
-    function showSlide(idx) {
-        if (idx < 0 || idx >= slides.length) {
-            console.error("슬라이드 인덱스가 범위를 벗어났습니다.");
-            return;
-        }
-        const slider = document.getElementById('sliderImage');
-        slider.innerHTML = `
-            <img src=" ${'${slides[idx]}'}"
-                 alt="슬라이드 이미지"
-                 style="width: 100%; height: 100%; object-fit: cover;">
-        `;
-        document.getElementById('slideIndex').textContent = idx + 1;
+    function renderSlides() {
+        const track = document.getElementById('sliderTrack');
+        console.log(slides.map);
+        track.innerHTML = slides.map(src => `
+            <div class="slide">
+                <img src="${'${src}'}" alt="슬라이드 이미지">
+            </div>
+        `).join('');
         document.getElementById('slideTotal').textContent = slides.length;
+        updateSlide();
     }
 
+    function updateSlide() {
+        const track = document.getElementById('sliderTrack');
+        track.style.transform = `translateX(-${'${currentSlide * 100}'}%)`;
+        document.getElementById('slideIndex').textContent = currentSlide + 1;
+    }
     function prevSlide() {
         currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-        showSlide(currentSlide);
+        updateSlide();
     }
 
     function nextSlide() {
         currentSlide = (currentSlide + 1) % slides.length;
-        showSlide(currentSlide);
+        updateSlide();
     }
 
     function loadTickets() {
