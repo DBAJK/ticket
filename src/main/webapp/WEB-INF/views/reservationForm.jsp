@@ -201,9 +201,10 @@
 
         setPeriod(1);
         searchReservations();
-        $(document).on('click', '.check-link', function () {
+        $(document).on('click', '#check-link', function () {
             const ticketId = $(this).data('ticket-id');
-            window.open('popup/reservationChk?ticketId=' + ticketId, "reservationChk", "width=650,height=900");
+            const placeId = $(this).data('place-id');
+            window.open('popup/reservationChk?ticketId=' + ticketId + '&placeId=' + placeId, "reservationChk", "width=650,height=900");
 
         });
     });
@@ -223,7 +224,7 @@
     function searchReservations() {
         const startDate = $('#startDate').val();
         const endDate = $('#endDate').val();
-        const ticketType = $('input[name="ticketType"]:checked').val(); // ← 이 부분이 핵심
+        const ticketType = $('input[name="ticketType"]:checked').val();
         $.ajax({
             url: '/reservation/search',
             type: 'GET',
@@ -240,10 +241,16 @@
                 data.forEach(ticket => {
                     const ticketTypeText = ticket.ticketType === 'sports' ? '스포츠 경기' : '기차';
                     const statusText = ticket.status === 'completed' ? '예약' : '취소';
+                    let checkBtn;
+                    if (statusText === '취소') {
+                        checkBtn = '<span class="check-link disabled" style="color:#bbb; cursor:default;">티켓 확인</span>';
+                    } else {
+                        checkBtn = `<a class="check-link" id="check-link" href="#" data-ticket-id="${'${ticket.ticketId}'}" data-place-id="${'${ticket.placeId}'}">티켓 확인</a>`;
+                    }
                     const row = `
                         <tr>
                             <td>${'${ticket.ticketName}'}</td>
-                            <td><a class="check-link" href="#" data-ticket-id="${'${ticket.ticketId}'}">티켓 확인</a></td>
+                            <td>${'${checkBtn}'}</td>
                             <td>${'${ticketTypeText}'}</td>
                             <td>${'${statusText}'}</td>
                             <td>${'${ticket.usedDt}'}</td>

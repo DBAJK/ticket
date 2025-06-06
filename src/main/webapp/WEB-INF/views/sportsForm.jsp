@@ -30,32 +30,34 @@
             <span class="open-title">예매오픈</span>
             <span class="wait-title">예매대기</span>
             <div class="nav-btns">
-                <button>&lt;</button>
-                <button>&gt;</button>
+                <button class="leftSlide">&lt;</button>
+                <button class="rightSlide">&gt;</button>
             </div>
         </div>
-        <div class="ticket-cards open-tickets"></div>       <%--예매 오픈 카드--%>
-        <div class="ticket-cards wait-tickets" style="display:none;"></div> <%--예매 대기 카드--%>
+        <div class="ticket-cards open-tickets"><%--예매 오픈 카드--%>
+            <div class="ticket-track"></div>
+        </div>
+        <div class="ticket-cards wait-tickets" style="display:none;"> <%--예매 대기 카드--%>
+            <div class="ticket-track"></div>
+        </div>
     </div>
 </div>
 <script>
     // 페이지 진입 시 기본 예매오픈 탭 보이기
-    $(document).ready(function() {
-
-        loadTickets();
+    $(document).ready(function () {
         $(document).on('click', '.reserveButton', function () { //
 
             const placeId = $(this).data('place-id');
             window.open('popup/sportsPopup?placeId=' + placeId, "sportsPopupForm", "width=1750,height=1200");
         });
         // 탭 클릭 이벤트
-        $('.open-title').on('click', function() {
+        $('.open-title').on('click', function () {
             $('.open-tickets').show();
             $('.wait-tickets').hide();
             // 탭 스타일 활성화 처리도 필요하면 추가
         });
 
-        $('.wait-title').on('click', function() {
+        $('.wait-title').on('click', function () {
             $('.open-tickets').hide();
             $('.wait-tickets').show();
             // 탭 스타일 활성화 처리도 필요하면 추가
@@ -63,11 +65,12 @@
 
         $('.open-tickets').show();
         $('.wait-tickets').hide();
+        loadTickets();
     });
 
 
     // 초기 표시
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         renderSlides();
         loadTickets(); // 티켓 카드 초기화
 
@@ -85,14 +88,21 @@
 
     let currentSlide = 0;
 
+    let openCardsIndex = 0;
+    let waitCardsIndex = 0;
+    let openCardsTotal = 0;
+    let waitCardsTotal = 0;
+    const cardsPerView = 4;
+
+
     function renderSlides() {
         const track = document.getElementById('sliderTrack');
         console.log(slides.map);
         track.innerHTML = slides.map(src => `
-            <div class="slide">
-                <img src="${'${src}'}" alt="슬라이드 이미지">
-            </div>
-        `).join('');
+        <div class="slide">
+            <img src="${'${src}'}" alt="슬라이드 이미지">
+        </div>
+    `).join('');
         document.getElementById('slideTotal').textContent = slides.length;
         updateSlide();
     }
@@ -102,6 +112,7 @@
         track.style.transform = `translateX(-${'${currentSlide * 100}'}%)`;
         document.getElementById('slideIndex').textContent = currentSlide + 1;
     }
+
     function prevSlide() {
         currentSlide = (currentSlide - 1 + slides.length) % slides.length;
         updateSlide();
@@ -119,20 +130,30 @@
             dataType: 'json',
             success: function (data) {
                 const now = new Date(); // 현재 시각
+
+                // 기존 컨테이너 초기화
                 const openContainer = $('.open-tickets');
                 const waitContainer = $('.wait-tickets');
                 openContainer.empty();
                 waitContainer.empty();
 
+                // 각 트랙(div) 재생성
+                const openTrack = $('<div>').addClass('ticket-track');
+                const waitTrack = $('<div>').addClass('ticket-track');
+                openContainer.append(openTrack);
+                waitContainer.append(waitTrack);
+
+                openCardsTotal = 0;
+                waitCardsTotal = 0;
+
                 data.forEach(ticket => {
-                    const matchDate = new Date(ticket.matchDate); // 예: 2025-06-06T18:30
-                    const openDate = new Date(ticket.openDate);    // 오픈일시
-                    const now = new Date();
+                    const matchDate = new Date(ticket.matchDate);
+                    const openDate = new Date(ticket.openDate);
                     const matchformatDate = formatMatchDate(matchDate);
-                    // --- 최상단 카드 컨테이너 ---
+
                     const card = $('<div>').addClass('match_card');
 
-                    // --- 시각 영역: 로고 및 vs ---
+                    // 비주얼 영역
                     const visual = $('<div>').addClass('match_card_visual');
                     const teamGroup = $('<div>').addClass('match_team_group');
 
@@ -153,20 +174,20 @@
                     teamGroup.append(homeImgBox, vsIcon, awayImgBox);
                     visual.append(teamGroup);
 
-                    // --- 경기 정보 영역 ---
+                    // 정보 영역
                     const info = $('<div>').addClass('match_card_info');
                     info.append(
                         $('<span>').addClass('match_card_date').text(matchformatDate),
                         $('<span>').addClass('match_card_place').text(ticket.stadium)
                     );
 
-                    // --- 버튼 영역 ---
+                    // 버튼 영역
                     const btnArea = $('<div>').addClass('match_card_btnarea');
                     const btnBox = $('<div>').addClass('common_btn_box');
 
                     if (now >= openDate) {
                         const reserveBtn = $('<button>')
-                            .attr('data-match-area', ticket.stadium) // 예시: 식별을 위한 데이터 속성
+                            .attr('data-match-area', ticket.stadium)
                             .attr('data-place-id', ticket.placeId)
                             .addClass('common_btn btn_primary btn_large plan_sale reserveButton')
                             .text('예매하기');
@@ -182,14 +203,16 @@
 
                     btnArea.append(btnBox);
 
-                    // --- 카드 조립 ---
+                    // 카드 조립
                     card.append(visual, info, btnArea);
 
-                    // --- DOM 삽입 ---
+                    // 분기 삽입
                     if (now >= openDate) {
-                        $('.open-tickets').append(card);
+                        openTrack.append(card);
+                        openCardsTotal++;
                     } else {
-                        $('.wait-tickets').append(card);
+                        waitTrack.append(card);
+                        waitCardsTotal++;
                     }
                 });
             },
@@ -199,17 +222,41 @@
             }
         });
     }
+
+
     function formatMatchDate(dateString) {  // 날짜 변환
         const date = new Date(dateString); // 예: "2025-06-06T18:30"
 
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0'); // 1월이 0이므로 +1
         const day = String(date.getDate()).padStart(2, '0');
-        const weekday = ['일','월','화','수','목','금','토'][date.getDay()];
+        const weekday = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
-        const formatDate = year + '.' + month + '.' + day + '(' + weekday + ')' +  hours + ':' + minutes;
+        const formatDate = year + '.' + month + '.' + day + '(' + weekday + ')' + hours + ':' + minutes;
         return formatDate;
     }
+
+    function slideOpenTickets(direction) {
+        const track = document.querySelector('.open-tickets .ticket-track');
+        const cards = track.querySelector('.match_card');
+        if (cards.length === 0) return; // 카드가 없으면 리턴
+        const cardWidth = cards.offsetWidth + 16; // 첫 번째 카드 너비 + 간격
+        const maxIndex = Math.max(0, openCardsTotal - cardsPerView);
+
+        if (direction === 'prev') openCardsIndex = Math.max(0, openCardsIndex - 1);
+        if (direction === 'next') openCardsIndex = Math.min(maxIndex, openCardsIndex + 1);
+
+        track.style.transform = `translateX(-${'${openCardsIndex * cardWidth}'}px)`;
+    }
+
+    // 버튼 이벤트 등록
+    document.querySelector('.nav-btns .leftSlide').addEventListener('click', () => {
+        slideOpenTickets('prev');
+    });
+
+    document.querySelector('.nav-btns .rightSlide').addEventListener('click', () => {
+        slideOpenTickets('next');
+    });
 
 </script>

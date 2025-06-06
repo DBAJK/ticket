@@ -1,0 +1,36 @@
+.leftmenu {
+    width: 250px;
+    background: #f5f6fa;
+    border-right: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+.menu-title {
+    font-size: 18px;
+    color: #888;
+    margin-left: 15px;
+    margin-bottom: 30px;
+    display: block;
+}
+
+.menu-item {
+    margin-left: 30px;
+    margin-bottom: 30px;
+    color: #bbb;
+}
+
+.menu-item:last-of-type {
+    margin-top: 15px;
+    margin-bottom: 0;
+}
+
+.menu-link {
+    font-size: 30px;
+    color: #bbb;
+    text-decoration: none;
+}
+
+.menu-link.active {
+    font-weight: bold;
+    color: #c0cae1;
+}

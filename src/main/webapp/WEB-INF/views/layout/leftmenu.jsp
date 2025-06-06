@@ -7,19 +7,41 @@
 --%>
 <!-- /layout/leftmenu.jsp -->
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<link href="/resources/css/main.css" rel="stylesheet" type="text/css">
 
-<div id="leftmenu" style="width:250px; background:#f5f6fa; border-right:1px solid #ddd; padding-top:20px;">
-    <div style="margin-bottom:30px;">
-        <span style="font-size:18px; color:#888; margin-left:15px;">Menu</span>
+<div id="leftmenu" class="leftmenu">
+    <div>
+        <span class="menu-title">Menu</span>
     </div>
-    <div style="margin-bottom:30px; color:#bbb; margin-left:30px;">
-        <a href="/sportsForm" style="font-size:30px; color:#bbb; font-weight: bold ;  text-decoration: none;">Sports</a>
+
+    <div class="menu-item" data-path="/sportsForm">
+        <a href="/sportsForm" class="menu-link">Sports</a>
     </div>
-    <div style="margin-bottom:30px; color:#bbb; margin-left:30px;">
-        <a href="/trainForm" style="font-size:30px; color:#bbb; text-decoration: none;">Train</a>
+
+    <div class="menu-item" data-path="/trainForm">
+        <a href="/trainForm" class="menu-link">Train</a>
     </div>
+
     <hr>
-    <div style="margin-top:15px; margin-left:30px;">
-        <a href="/reservationForm"  style="font-size:30px; color:#bbb; text-decoration: none;">Reservation</a>
+
+    <div class="menu-item" data-path="/reservationForm">
+        <a href="/reservationForm" class="menu-link">Reservation</a>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const formType = urlParams.get("formType"); // ex: "trainForm"
+
+        if (!formType) return;
+
+        document.querySelectorAll('.menu-item').forEach(item => {
+            const path = item.getAttribute('data-path'); // ex: "/trainForm"
+            if (path.includes(formType)) {
+                const link = item.querySelector('.menu-link');
+                link.classList.add('active');
+            }
+        });
+    });
+</script>

@@ -186,6 +186,31 @@ public class ticketController {
 
         return resultList;
     }
+    //예약 정보 상세 조회
+    @RequestMapping(value = "/reservation/ticketInfo", method = RequestMethod.GET)
+    @ResponseBody
+    public List<TicketVo> searchTicketInfo(HttpServletRequest request, TicketVo vo) {
+
+        HttpSession session = request.getSession(false);
+        String userId = (String) session.getAttribute("userId");
+        vo.setUserId(userId);
+
+        // DB에서 티켓 목록 조회
+        List<TicketVo> resultList = ticketService.searchTicketInfo(vo);
+
+        return resultList;
+    }
+
+    @PostMapping("/api/ticketCancel")
+    @ResponseBody
+    public ResponseEntity<String> cancelReservation(HttpServletRequest request, TicketVo vo) {
+
+        HttpSession session = request.getSession(false);
+        String userId = (String) session.getAttribute("userId");
+        vo.setUserId(userId);
+        ticketService.cancelReservation(vo);
+        return ResponseEntity.ok("success");
+    }
 
     // sportsForm 티켓 정보 가져오기 
     @GetMapping("/getTicketList")

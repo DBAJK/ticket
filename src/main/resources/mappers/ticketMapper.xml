@@ -35,16 +35,17 @@
         WHERE userId = #{userId}
     </select>
 
-<!-- 티켓 예약 리스트 -->
+    <!-- 티켓 예약 리스트 -->
     <select id="searchTickets" parameterType="com.pj.ticket.vo.TicketVo" resultType="com.pj.ticket.vo.TicketVo">
         SELECT
             sp.seatPriceId,
             bs.ticketId,
-            u.userName AS userName,
-            bs.ticketName AS ticketName,
-            bs.ticketType AS ticketType,
-            sp.status as status,
-            sp.usedDt AS usedDt
+            sp.placeId,
+            u.userName,
+            bs.ticketName,
+            bs.ticketType,
+            sp.status,
+            sp.usedDt
         FROM
             seatprice sp
         JOIN
@@ -60,6 +61,38 @@
         GROUP BY sp.ticketId, u.userId, bs.placeId
     </select>
 
+    <!-- 티켓 예약 상세 정보 -->
+    <select id="searchTicketInfo" parameterType="com.pj.ticket.vo.TicketVo" resultType="com.pj.ticket.vo.TicketVo">
+        SELECT
+            sp.seatPriceId,
+            bs.ticketId,
+            u.userName,
+            bs.ticketName,
+            bs.ticketType,
+            sp.status,
+            sp.usedDt,
+            bs.placeName,
+            CONCAT(sp.seatZone, '존 ', sp.seatRow, '-', sp.seatCol) as seatFull
+        FROM
+            seatprice sp
+        JOIN
+            Users u ON sp.userId = u.userId
+        JOIN
+            book_show bs ON sp.ticketId = bs.ticketId
+        WHERE 1=1
+            AND u.userId = #{userId}
+            AND sp.ticketId = #{ticketId}
+            AND sp.placeId = #{placeId}
+    </select>
+
+    <update id="cancelReservation" parameterType="com.pj.ticket.vo.TicketVo">
+        UPDATE seatprice
+        SET
+            status = 'cancle'
+        WHERE userId = #{userId}
+            and ticketId = #{ticketId}
+            and placeId = #{placeId}
+    </update>
 
     <update id="updateUser" parameterType="com.pj.ticket.vo.TicketVo">
         UPDATE users
