@@ -266,9 +266,8 @@
                     // 좌석 엘리먼트 생성
                     const seatEl = $('<span>')
                         .addClass('seat')
-                        .addClass('available')
+                        .addClass(seat.seatStatus === 'booked' ? 'unavailable' : 'available')
                         .data('seat-id',`${'${zone}'}-${'${row}'}-${'${col}'}`)
-                        // .addClass(seat.available ? 'available' : 'unavailable') seat 추가하면 주석 해제
                         .text(`${'${row}'}-${'${col}'}`) // 필요 시 제거
                         .on('click', function () {
                             if (!$(this).hasClass('available')) return;

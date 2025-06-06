@@ -37,6 +37,7 @@
     .header-left {
         display: flex;
         align-items: center;
+        padding-left: 35px;
     }
 
     .logo-circle {
@@ -86,6 +87,7 @@
     .header-right {
         display: flex;
         align-items: center;
+        padding-right: 25px;
     }
 
     .user-name {

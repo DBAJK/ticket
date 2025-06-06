@@ -128,7 +128,7 @@
     
     <select id="ticketPopupSeat" parameterType="String" resultType="com.pj.ticket.vo.TicketVo">
         SELECT bs.ticketId, bs.ticketName, bs.startDate, bs.homeTeamLogo
-             , p.placeId, p.placeName, p.address, p.seatZone, p.seatRow, p.seatCol
+             , p.placeId, p.placeName, p.address, p.seatZone, p.seatRow, p.seatCol, p.seatStatus
         FROM book_show bs
             LEFT JOIN place p on bs.placeId = p.placeId
         WHERE p.placeId = #{placeId}
@@ -138,4 +138,14 @@
         INSERT INTO seatprice(ticketId, userId, placeId, price, seatZone, seatRow, seatCol, usedDt)
         VALUES(#{ticketId}, #{userId}, #{placeId}, #{price}, #{seatZone}, #{seatRow}, #{seatCol}, #{usedDt});
     </insert>
+
+    <update id="reserveUpdate" parameterType="com.pj.ticket.vo.TicketVo">
+        UPDATE place
+            SET seatStatus = 'booked'
+        WHERE placeId = #{placeId}
+            AND seatZone = #{seatZone}
+            AND seatCol = #{seatCol}
+            AND seatRow = #{seatRow}
+    </update>
+
 </mapper>

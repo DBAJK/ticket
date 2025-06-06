@@ -70,6 +70,7 @@ public class TicketService {
             vo.setSeatCol(col);
 
             ticketDAO.reserveInsert(vo);
+            ticketDAO.reserveUpdate(vo);
         }
 
     }

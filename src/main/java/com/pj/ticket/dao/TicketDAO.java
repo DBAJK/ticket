@@ -26,4 +26,5 @@ public interface TicketDAO {
     List<TicketVo> ticketPopupSeat(String placeId);
 
     void reserveInsert(TicketVo vo) throws Exception;
+    void reserveUpdate(TicketVo vo) throws Exception;
 }

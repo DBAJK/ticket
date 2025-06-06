@@ -245,7 +245,8 @@
                     if (statusText === '취소') {
                         checkBtn = '<span class="check-link disabled" style="color:#bbb; cursor:default;">티켓 확인</span>';
                     } else {
-                        checkBtn = `<a class="check-link" id="check-link" href="#" data-ticket-id="${'${ticket.ticketId}'}" data-place-id="${'${ticket.placeId}'}">티켓 확인</a>`;
+                        checkBtn = `<a class="check-link" id="check-link" href="#"
+                            data-ticket-id="${'${ticket.ticketId}'}" data-place-id="${'${ticket.placeId}'}">티켓 확인</a>`;
                     }
                     const row = `
                         <tr>
