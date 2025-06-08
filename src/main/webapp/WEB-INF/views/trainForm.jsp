@@ -9,158 +9,47 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<style>
-    .container {
-        font-family: 'Pretendard', 'Malgun Gothic', Arial, sans-serif;
-        background: #f7f9fa;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-    }
-    .main-container {
-        max-width: 1500px;
-        margin: 32px auto;
-        background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-        padding: 32px 32px 24px 32px;
-    }
-    .search-bar {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        margin-bottom: 18px;
-    }
-    .search-bar input,
-    .search-bar select {
-        font-size: 16px;
-        padding: 6px 10px;
-        border-radius: 6px;
-        border: 1px solid #d0d4d7;
-    }
-    .search-bar label {
-        font-size: 16px;
-        margin-right: 6px;
-    }
-    .option-bar {
-        display: flex;
-        align-items: center;
-        gap: 18px;
-        margin-bottom: 18px;
-        font-size: 15px;
-    }
-    .option-bar label {
-        margin-right: 2px;
-    }
-    .train-list-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 12px;
-    }
-    .train-list-table th, .train-list-table td {
-        border-bottom: 1px solid #e5e7ea;
-        padding: 16px 8px;
-        text-align: center;
-        font-size: 16px;
-    }
-    .train-list-table th {
-        background: #f2f4f7;
-        font-weight: bold;
-        color: #222;
-    }
-    .train-list-table td {
-        background: #fff;
-        color: #222;
-        vertical-align: middle;
-    }
-    .train-logo {
-        width: 52px;
-        height: 22px;
-        object-fit: contain;
-        vertical-align: middle;
-        margin-right: 6px;
-    }
-    .soldout {
-        color: #bbb;
-        background: #f8f8f8;
-    }
-    .info-badge {
-        background: #f2f4f7;
-        color: #3d4db7;
-        border-radius: 6px;
-        padding: 2px 8px;
-        font-size: 13px;
-        margin-left: 6px;
-        display: inline-block;
-    }
-</style>
+<link href="/resources/css/trainForm.css" rel="stylesheet" type="text/css">
 <div class="container">
     <div class="main-container">
         <form class="search-bar">
             <label for="departure">출발지:</label>
             <select id="departure">
                 <option value="seoul">서울</option>
-                <option value="kt">수원</option>
-                <option value="hanwha">대전</option>
-                <option value="kia">광주</option>
-                <option value="samsung">대구</option>
-                <option value="lotte">부산</option>
-                <option value="nc">창원</option>
+                <option value="daejeon">대전</option>
+                <option value="gwangju">광주</option>
+                <option value="daegu">대구</option>
+                <option value="busan">부산</option>
+                <option value="masan">창원</option>
             </select>
 
             <label for="destination">도착지:</label>
             <select id="destination">
             </select>
             <input type="date" id="todayDate" style="width:130px;">
-            <select>
-                <option value="1">총 1명</option>
-                <option value="2">총 2명</option>
-                <option value="3">총 3명</option>
-                <option value="4">총 4명</option>
-            </select>
+            <button type="button" id="searchBtn" style="padding: 8px 16px; background: #1976d2; color: white; border: none; border-radius: 4px; cursor: pointer;">조회</button>
         </form>
         <table class="train-list-table">
             <thead>
-                <tr>
-                    <th style="width:120px">열차</th>
-                    <th>구간/시간</th>
-                    <th>비고</th>
-                    <th>일반실</th>
-                </tr>
+            <tr>
+                <th style="width:120px">열차</th>
+                <th>구간/시간</th>
+                <th>일반실</th>
+            </tr>
             </thead>
-            <tbody>
-                <tr>
-                    <td><img class="train-logo" src="https://www.letskorail.com/images/ekr/ekr_train_ktx.png" alt="KTX">021</td>
-                    <td>서울 → 부산<br><span style="font-size:13px;">09:58 ~ 12:46</span><br><span style="font-size:12px;color:#888;">소요시간: 2시간 48분</span></td>
-                    <td></td>
-                    <td class="soldout">매진</td>
-                </tr>
-                <tr>
-                    <td><img class="train-logo" src="https://www.letskorail.com/images/ekr/ekr_train_ktx.png" alt="KTX">123</td>
-                    <td>서울 → 부산<br><span style="font-size:13px;">10:12 ~ 13:35</span><br><span style="font-size:12px;color:#888;">소요시간: 3시간 23분</span></td>
-                    <td><span class="info-badge">수원정차</span></td>
-                    <td class="soldout">매진</td>
-                </tr>
-                <tr>
-                    <td><img class="train-logo" src="https://www.letskorail.com/images/ekr/ekr_train_ktx.png" alt="KTX">163</td>
-                    <td>서울 → 부산<br><span style="font-size:13px;">10:18 ~ 13:32</span><br><span style="font-size:12px;color:#888;">소요시간: 3시간 14분</span></td>
-                    <td><span class="info-badge">서대구,구포정차</span></td>
-                    <td class="soldout">매진</td>
-                </tr>
-                <tr>
-                    <td><img class="train-logo" src="https://www.letskorail.com/images/ekr/ekr_train_itx.png" alt="ITX">1005</td>
-                    <td>서울 → 부산<br><span style="font-size:13px;">10:23 ~ 15:21</span><br><span style="font-size:12px;color:#888;">소요시간: 4시간 58분</span></td>
-                    <td></td>
-                    <td class="soldout">매진</td>
-                </tr>
+            <tbody id="trainTableBody">
             </tbody>
         </table>
     </div>
 </div>
 <script>
+    let allTrains = []; // 전체 열차 데이터
+    let currentPage = 1; // 현재 페이지
+    const itemsPerPage = 10; // 페이지당 항목 수
+
     $(document).ready(function () {
         init();
+        loadTrains(); // 초기 데이터 로드
     });
 
     function init(){
@@ -170,54 +59,256 @@
         const dd = String(today.getDate()).padStart(2, '0');
         const formatted = `${'${yyyy}'}-${'${mm}'}-${'${dd}'}`;
         document.getElementById('todayDate').value = formatted;
+        populateDestinations();
+        updateDestinations();
     }
 
-    const destinations = [
-        { place: '수원', team: 'kt' },
-        { place: '대전', team: '한화' },
-        { place: '광주', team: '기아' },
-        { place: '대구', team: '삼성' },
-        { place: '부산', team: '롯데' },
-        { place: '창원', team: 'NC' }
+    const seoulDestinations = [
+        { place: '대전', team: 'daejeon' },
+        { place: '광주', team: 'gwangju' },
+        { place: '대구', team: 'daegu' },
+        { place: '부산', team: 'busan' },
+        { place: '창원', team: 'masan' }
     ];
+    function updateDestinations() {
+        destinationSelect.innerHTML = ''; // 기존 옵션 초기화
+
+        if (departureSelect.value === 'seoul') {
+            seoulDestinations.forEach(dest => {
+                const option = document.createElement('option');
+                option.value = dest.team;
+                option.textContent = dest.place;
+                destinationSelect.appendChild(option);
+            });
+        } else {
+            const seoulOption = document.createElement('option');
+            seoulOption.value = 'seoul';
+            seoulOption.textContent = '서울';
+            destinationSelect.appendChild(seoulOption);
+        }
+    }
+
+    const korCityMap = {
+        seoul: '서울',
+        busan: '부산',
+        daejeon: '대전',
+        daegu: '대구',
+        masan: '마산',
+        gwangju: '광주송정'
+    };
 
     const departureSelect = document.getElementById('departure');
     const destinationSelect = document.getElementById('destination');
-    const teamInfoDiv = document.getElementById('teamInfo');
 
     function populateDestinations() {
         destinationSelect.innerHTML = '';
-        destinations.forEach(dest => {
-            const option = document.createElement('option');
-            option.value = dest.place;
-            option.textContent = dest.place;
-            destinationSelect.appendChild(option);
+        const selectedDeparture = departureSelect.value;
+
+        seoulDestinations.forEach(dest => {
+            if (dest.team !== selectedDeparture) {
+                const option = document.createElement('option');
+                option.value = dest.team;
+                option.textContent = dest.place;
+                destinationSelect.appendChild(option);
+            }
         });
-        updateTeamInfo();
     }
 
-    function updateTeamInfo() {
-        const selectedPlace = destinationSelect.value;
-        const team = destinations.find(d => d.place === selectedPlace)?.team || '';
-        teamInfoDiv.textContent = `팀(연고지): ${team}`;
+    function loadTrains() {
+        const departure = document.getElementById('departure').value;
+        const destination = document.getElementById('destination').value;
+        const date = document.getElementById('todayDate').value;
+
+        $.ajax({
+            url: '/api/trains',
+            method: 'GET',
+            data: {
+                awayTeam: departure,
+                homeTeam: destination,
+                startDate: date
+            },
+            success: function(trains) {
+                renderTrains(trains);
+            },
+            error: function(xhr, status, error) {
+                console.error('Error loading trains:', error);
+                $('#trainTableBody').html('<tr><td colspan="4">조회된 열차가 없습니다.</td></tr>');
+            }
+        });
+    }
+
+    function renderTrains(trains) {
+        allTrains = trains; // 전체 데이터 저장
+        currentPage = 1; // 페이지 초기화
+        renderCurrentPage();
+        renderPagination();
+
+    }
+
+    function renderCurrentPage() {
+        const tbody = document.getElementById('trainTableBody');
+        tbody.innerHTML = '';
+
+        if (allTrains.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4">조회된 열차가 없습니다.</td></tr>';
+            return;
+        }
+        // 현재 페이지에 표시할 데이터 계산
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const currentTrains = allTrains.slice(startIndex, endIndex);
+
+        currentTrains.forEach(function(train) {
+            const row = document.createElement('tr');
+            // 한글 도시명으로 변환
+            const homeKor = korCityMap[train.homeTeamName] || train.homeTeamName;
+            const awayKor = korCityMap[train.awayTeamName] || train.awayTeamName;
+            const formattedRoute = `${'${awayKor} → ${homeKor}'}`;
+
+            row.innerHTML = `
+                <td>
+                    <div class="train-info">
+                        <div class="train-name">${'${train.ticketName}'}</div>
+                    </div>
+                </td>
+                <td>
+                    <div>${'${formattedRoute}'}</div>
+                    <div class="time-info">(${'${train.description}'})</div>
+                </td>
+                <td>
+                    <button class="seat-button"
+                            onclick="selectSeat(${'${train.ticketId}'})">
+                        예매하기
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+    function renderPagination() {
+        const totalPages = Math.ceil(allTrains.length / itemsPerPage);
+        const paginationContainer = document.getElementById('paginationContainer');
+
+        if (!paginationContainer) {
+            // 페이지네이션 컨테이너가 없으면 생성
+            const tableContainer = document.querySelector('.train-list-table').parentNode;
+            const paginationDiv = document.createElement('div');
+            paginationDiv.id = 'paginationContainer';
+            paginationDiv.className = 'pagination-container';
+            tableContainer.appendChild(paginationDiv);
+        }
+
+        const pagination = document.getElementById('paginationContainer');
+        pagination.innerHTML = '';
+
+        if (totalPages <= 1) {
+            return; // 페이지가 1개 이하면 페이지네이션 숨김
+        }
+
+        // 이전 버튼
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'pagination-btn';
+        prevBtn.textContent = '이전';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderCurrentPage();
+                renderPagination();
+            }
+        };
+        pagination.appendChild(prevBtn);
+
+        // 페이지 번호 버튼들
+        const maxVisiblePages = 5; // 표시할 최대 페이지 수
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        // 끝 페이지 기준으로 시작 페이지 재조정
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        // 첫 페이지 (1이 표시 범위에 없을 때)
+        if (startPage > 1) {
+            const firstBtn = document.createElement('button');
+            firstBtn.className = 'pagination-btn';
+            firstBtn.textContent = '1';
+            firstBtn.onclick = () => goToPage(1);
+            pagination.appendChild(firstBtn);
+
+            if (startPage > 2) {
+                const ellipsis = document.createElement('span');
+                ellipsis.className = 'pagination-ellipsis';
+                ellipsis.textContent = '...';
+                pagination.appendChild(ellipsis);
+            }
+        }
+
+        // 페이지 번호들
+        for (let i = startPage; i <= endPage; i++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.className = 'pagination-btn';
+            if (i === currentPage) {
+                pageBtn.classList.add('active');
+            }
+            pageBtn.textContent = i;
+            pageBtn.onclick = () => goToPage(i);
+            pagination.appendChild(pageBtn);
+        }
+
+        // 마지막 페이지 (마지막이 표시 범위에 없을 때)
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                const ellipsis = document.createElement('span');
+                ellipsis.className = 'pagination-ellipsis';
+                ellipsis.textContent = '...';
+                pagination.appendChild(ellipsis);
+            }
+
+            const lastBtn = document.createElement('button');
+            lastBtn.className = 'pagination-btn';
+            lastBtn.textContent = totalPages;
+            lastBtn.onclick = () => goToPage(totalPages);
+            pagination.appendChild(lastBtn);
+        }
+
+        // 다음 버튼
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'pagination-btn';
+        nextBtn.textContent = '다음';
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderCurrentPage();
+                renderPagination();
+            }
+        };
+        pagination.appendChild(nextBtn);
+
+        // 페이지 정보 표시
+        const pageInfo = document.createElement('div');
+        pageInfo.className = 'page-info';
+        pageInfo.textContent = `${'${currentPage}'} / ${'${totalPages}'} 페이지 (총 ${'${allTrains.length}'}개)`;
+        pagination.appendChild(pageInfo);
+    }
+
+    function goToPage(page) {
+        currentPage = page;
+        renderCurrentPage();
+        renderPagination();
+    }
+
+    function selectSeat(ticketId) {
+        alert('좌석 선택: ' + ticketId);
+        window.open('popup/trainPopup?ticketId=' + ticketId, "trainPopup", "width=1350,height=1200");
     }
 
     departureSelect.addEventListener('change', () => {
-        // 현재 출발지는 서울만 있으므로 도착지 목록 갱신
-        if (departureSelect.value === '서울') {
-            populateDestinations();
-        } else {
-            destinationSelect.innerHTML = '';
-            const option = document.createElement('option');
-            option.value = '서울';
-            option.textContent = '서울';
-            destinationSelect.appendChild(option);
-            teamInfoDiv.textContent = '';
-        }
+        populateDestinations();
+        updateDestinations();
     });
 
-    destinationSelect.addEventListener('change', updateTeamInfo);
-
-    // 초기화
-    populateDestinations();
+    document.getElementById('searchBtn').addEventListener('click', loadTrains);
 </script>

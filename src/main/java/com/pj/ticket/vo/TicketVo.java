@@ -28,6 +28,7 @@ public class TicketVo {
     private String ticketType;
     private String description;
 
+    private String createAt;
     private String startDate;
     private String endDate;
 
@@ -50,5 +51,6 @@ public class TicketVo {
     private String seatStatus;
 
     private String seatPriceId;
+    private String seatPrice;
 
 }

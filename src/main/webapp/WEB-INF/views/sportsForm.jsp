@@ -46,18 +46,20 @@
     // 페이지 진입 시 기본 예매오픈 탭 보이기
     $(document).ready(function () {
         $(document).on('click', '.reserveButton', function () { //
-
             const placeId = $(this).data('place-id');
-            window.open('popup/sportsPopup?placeId=' + placeId, "sportsPopupForm", "width=1750,height=1200");
+            const ticketId = $(this).data('ticket-id');
+            window.open('popup/sportsPopup?placeId=' + placeId + '&ticketId=' + ticketId, "sportsPopupForm", "width=1750,height=1200");
         });
         // 탭 클릭 이벤트
         $('.open-title').on('click', function () {
+            activeTab = 'open';
             $('.open-tickets').show();
             $('.wait-tickets').hide();
             // 탭 스타일 활성화 처리도 필요하면 추가
         });
 
         $('.wait-title').on('click', function () {
+            activeTab = 'wait';
             $('.open-tickets').hide();
             $('.wait-tickets').show();
             // 탭 스타일 활성화 처리도 필요하면 추가
@@ -87,12 +89,13 @@
     ];
 
     let currentSlide = 0;
+    let activeTab = 'open'; // 'open' 또는 'wait'
 
     let openCardsIndex = 0;
     let waitCardsIndex = 0;
     let openCardsTotal = 0;
     let waitCardsTotal = 0;
-    const cardsPerView = 4;
+    const cardsPerView = 5;
 
 
     function renderSlides() {
@@ -150,6 +153,9 @@
                     const matchDate = new Date(ticket.matchDate);
                     const openDate = new Date(ticket.openDate);
                     const matchformatDate = formatMatchDate(matchDate);
+                    if(now > matchDate){
+                        return;
+                    }
 
                     const card = $('<div>').addClass('match_card');
 
@@ -189,6 +195,7 @@
                         const reserveBtn = $('<button>')
                             .attr('data-match-area', ticket.stadium)
                             .attr('data-place-id', ticket.placeId)
+                            .attr('data-ticket-id', ticket.ticketId)
                             .addClass('common_btn btn_primary btn_large plan_sale reserveButton')
                             .text('예매하기');
                         btnBox.append(reserveBtn);
@@ -238,16 +245,25 @@
     }
 
     function slideOpenTickets(direction) {
-        const track = document.querySelector('.open-tickets .ticket-track');
+        const isOpen = activeTab === 'open';
+        const sectionClass = isOpen ? '.open-tickets' : '.wait-tickets';
+
+        const track = document.querySelector(`${'${sectionClass}'} .ticket-track`);
         const cards = track.querySelector('.match_card');
         if (cards.length === 0) return; // 카드가 없으면 리턴
-        const cardWidth = cards.offsetWidth + 16; // 첫 번째 카드 너비 + 간격
-        const maxIndex = Math.max(0, openCardsTotal - cardsPerView);
-
-        if (direction === 'prev') openCardsIndex = Math.max(0, openCardsIndex - 1);
-        if (direction === 'next') openCardsIndex = Math.min(maxIndex, openCardsIndex + 1);
-
-        track.style.transform = `translateX(-${'${openCardsIndex * cardWidth}'}px)`;
+        const cardWidth = cards.offsetWidth + 32; // 첫 번째 카드 너비 + 간격
+        const cardsPerView = Math.floor(track.offsetWidth / cardWidth); // 필요시 계산
+        if (isOpen) {
+            const maxIndex = Math.max(0, openCardsTotal - cardsPerView) -1;
+            if (direction === 'prev') openCardsIndex = Math.max(0, openCardsIndex - 1);
+            if (direction === 'next') openCardsIndex = Math.min(maxIndex, openCardsIndex + 1);
+            track.style.transform = `translateX(-${'${openCardsIndex * cardWidth}'}px)`;
+        } else {
+            const maxIndex = Math.max(0, waitCardsTotal - cardsPerView) -1;
+            if (direction === 'prev') waitCardsIndex = Math.max(0, waitCardsIndex - 1);
+            if (direction === 'next') waitCardsIndex = Math.min(maxIndex, waitCardsIndex + 1);
+            track.style.transform = `translateX(-${'${waitCardsIndex * cardWidth}'}px)`;
+        }
     }
 
     // 버튼 이벤트 등록

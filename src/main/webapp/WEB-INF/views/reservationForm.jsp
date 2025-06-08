@@ -198,7 +198,6 @@
 </body>
 <script>
     $(document).ready(function () {
-
         setPeriod(1);
         searchReservations();
         $(document).on('click', '#check-link', function () {
@@ -224,6 +223,7 @@
     function searchReservations() {
         const startDate = $('#startDate').val();
         const endDate = $('#endDate').val();
+
         const ticketType = $('input[name="ticketType"]:checked').val();
         $.ajax({
             url: '/reservation/search',

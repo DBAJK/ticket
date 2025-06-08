@@ -172,8 +172,8 @@
     }
 </style>
 <div class="ticket-info">
-    <input id="ticketId" disabled>
-    <input id="placeId" disabled>
+    <input id="ticketId" type="hidden">
+    <input id="placeId" type="hidden">
     <div class="titleArea">
         <div class="match-title">
             <span id="matchTitle" class="matchTitle"></span>
@@ -206,8 +206,9 @@
 
 <script>
     $(document).ready(function () {
-        const urlParams = new URLSearchParams(window.location.search);
-        const placeId = urlParams.get('placeId');
+        const params = new URLSearchParams(window.location.search);
+        const ticketId = params.get('ticketId');
+        const placeId = params.get('placeId');
         let globalSeatData = []; // 전역으로 저장할 seat 데이터
 
         // 경기 정보 및 구역 리스트 로딩
@@ -215,7 +216,7 @@
             url: '/api/matchSeat',
             method: 'GET',
             dataType: 'json',
-            data: {'placeId' : placeId},
+            data: {'placeId' : placeId, 'ticketId' : ticketId},
             success: function (data) {
                 const logoUrl = data[0].homeTeamLogo; // 예: 'https://example.com/logo.png'
                 $("#ticketId").val(data[0].ticketId);
@@ -268,7 +269,7 @@
                         .addClass('seat')
                         .addClass(seat.seatStatus === 'booked' ? 'unavailable' : 'available')
                         .data('seat-id',`${'${zone}'}-${'${row}'}-${'${col}'}`)
-                        .text(`${'${row}'}-${'${col}'}`) // 필요 시 제거
+                        .data('seat-price', `${'${seat.seatPrice}'}`)
                         .on('click', function () {
                             if (!$(this).hasClass('available')) return;
 
@@ -312,9 +313,11 @@
         // 예매하기 클릭 시
         $('#reserveButton').on('click', function () {
             const selectedSeats = $('.seat.selected').map((i, el) => $(el).data('seat-id')).get();
+            const selectedSeatPrices = $('.seat.selected').map((i, el) => Number($(el).data('seat-price'))).get();
             const personCount = parseInt($('#personRange').val());
             const fullMatchDate = $("#matchDate").text();
             const dateOnly = fullMatchDate.substring(0, 10).replace(/\./g, '-');
+            const totalPrice = selectedSeatPrices.reduce((sum, price) => sum + price, 0);
 
             if (selectedSeats.length !== personCount) {
                 alert('선택한 좌석 수가 인원 수와 다릅니다.');
@@ -324,7 +327,7 @@
                 placeId: placeId,
                 seats: selectedSeats,
                 ticketId: $("#ticketId").val(),
-                price: '19000',
+                price: totalPrice.toString(),
                 usedDt: dateOnly
             };
 
@@ -335,12 +338,15 @@
                 contentType: 'application/json',
                 data: JSON.stringify(requestData),
                 success: function (response) {
-                    alert('예매 완료!');
-                    // 페이지 리로드 또는 상태 갱신 로직
+                    if (confirm("예매 완료 되었습니다.")) {
+                        window.close(); // 팝업 닫기
+                    }
                 },
                 error: function (xhr) {
-                    if (xhr.status === 401) {
-                        alert('로그인 후 예매해주세요.'); // "로그인 후 예매해주세요."
+                    if (xhr.status == 400 && xhr.responseText == 9083) {
+                        alert('포인트가 부족합니다.');
+                    } else if (xhr.status == 401) {
+                        alert('로그인 후 예매해주세요.');
                         if (confirm("로그인 화면으로 이동하시겠습니까?")) {
                             window.opener.location.href = "/loginForm"; // 부모 창 이동
                             window.close(); // 팝업 닫기
@@ -351,6 +357,7 @@
                     } else {
                         alert('예매 실패');
                     }
+
                 }
             });
         });

@@ -45,7 +45,8 @@
             bs.ticketName,
             bs.ticketType,
             sp.status,
-            sp.usedDt
+            sp.usedDt,
+            sp.createAt
         FROM
             seatprice sp
         JOIN
@@ -53,7 +54,7 @@
         JOIN
             book_show bs ON sp.ticketId = bs.ticketId
         WHERE 1=1
-            AND sp.usedDt BETWEEN #{startDate} AND #{endDate}
+            AND sp.createAt BETWEEN #{startDate} AND DATE_ADD(#{endDate}, INTERVAL 1 DAY)
             AND u.userId = #{userId}
         <if test="ticketType != null and ticketType != ''">
             AND bs.ticketType = #{ticketType}
@@ -97,13 +98,13 @@
     <update id="updateUser" parameterType="com.pj.ticket.vo.TicketVo">
         UPDATE users
         SET
-            updatedAt = sysdate()
-            <if test="userPw != null and userPw != ''">
-                , password = #{userPw}
-            </if>
-            <if test="userName != null and userName != ''">
-                , userName = #{userName}
-            </if>
+        updatedAt = sysdate()
+        <if test="userPw != null and userPw != ''">
+            , password = #{userPw}
+        </if>
+        <if test="userName != null and userName != ''">
+            , userName = #{userName}
+        </if>
         WHERE userId = #{userId}
     </update>
 
@@ -123,29 +124,58 @@
              , openDate
         FROM book_show
         WHERE 1=1
+            AND ticketType = 'sports'
+        ORDER BY startDate, openDate
     </select>
 
     
-    <select id="ticketPopupSeat" parameterType="String" resultType="com.pj.ticket.vo.TicketVo">
+    <select id="ticketPopupSeat" parameterType="com.pj.ticket.vo.TicketVo" resultType="com.pj.ticket.vo.TicketVo">
         SELECT bs.ticketId, bs.ticketName, bs.startDate, bs.homeTeamLogo
-             , p.placeId, p.placeName, p.address, p.seatZone, p.seatRow, p.seatCol, p.seatStatus
-        FROM book_show bs
-            LEFT JOIN place p on bs.placeId = p.placeId
+             , p.placeId, p.placeName, p.address, p.seatZone, p.seatRow, p.seatCol, p.seatprice
+                          , COALESCE(sp.seatStatus, 'available') AS seatStatus
+        FROM place p
+            LEFT JOIN book_show bs ON bs.placeId = p.placeId
+            LEFT JOIN seatprice sp ON sp.placeId = p.placeId
+                AND sp.ticketId = bs.ticketId
+                AND sp.seatZone = p.seatZone
+                AND sp.seatRow = p.seatRow
+                AND sp.seatCol = p.seatCol
         WHERE p.placeId = #{placeId}
+        AND bs.ticketId = #{ticketId}
+        ORDER BY p.seatZone+0, p.seatRow+0, p.seatCol+0
     </select>
 
     <insert id="reserveInsert" parameterType="com.pj.ticket.vo.TicketVo">
-        INSERT INTO seatprice(ticketId, userId, placeId, price, seatZone, seatRow, seatCol, usedDt)
-        VALUES(#{ticketId}, #{userId}, #{placeId}, #{price}, #{seatZone}, #{seatRow}, #{seatCol}, #{usedDt});
+        INSERT INTO seatprice(ticketId, userId, placeId, price, seatZone, seatRow, seatCol, usedDt, seatStatus)
+        VALUES(#{ticketId}, #{userId}, #{placeId}, #{seatPrice}, #{seatZone}, #{seatRow}, #{seatCol}, #{usedDt}, 'booked');
     </insert>
 
-    <update id="reserveUpdate" parameterType="com.pj.ticket.vo.TicketVo">
-        UPDATE place
-            SET seatStatus = 'booked'
-        WHERE placeId = #{placeId}
-            AND seatZone = #{seatZone}
-            AND seatCol = #{seatCol}
-            AND seatRow = #{seatRow}
+    <update id="pointUpdate" parameterType="com.pj.ticket.vo.TicketVo">
+        UPDATE users
+        SET point = #{point}
+        WHERE userId = #{userId}
     </update>
+
+    <select id="searchTrainCard" parameterType="com.pj.ticket.vo.TicketVo" resultType="com.pj.ticket.vo.TicketVo">
+        SELECT ticketId
+             , placeId
+             , placeName
+             , ticketName
+             , description
+             , ticketType
+             , homeTeam
+             , homeTeamLogo
+             , awayTeam
+             , awayTeamLogo
+             , startDate
+             , openDate
+        FROM book_show
+        WHERE 1=1
+            AND ticketType = 'Train'
+            AND homeTeam = #{homeTeam}
+            AND awayTeam = #{awayTeam}
+            AND startDate = #{startDate}
+        ORDER BY description
+    </select>
 
 </mapper>

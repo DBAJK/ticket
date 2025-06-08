@@ -62,6 +62,11 @@ public class ticketController {
         return "popup/reservationChk";
     }
 
+    @GetMapping("popup/trainPopup")
+    public String trainPopupRedirect() {
+        return "popup/trainPopup";
+    }
+
     @GetMapping("/myPage")
     public String myPageRedirect() {
         return "redirect:/?formType=myPage";
@@ -111,6 +116,7 @@ public class ticketController {
             loginId = "loginOk";
             session.setAttribute("userId", vo.getUserId());
             session.setAttribute("userName", userChk.getUserName());
+            session.setAttribute("userPoint", userChk.getPoint());
         }
         return loginId;
     }
@@ -226,6 +232,7 @@ public class ticketController {
             ticketMap.put("openDate", ticket.getOpenDate());        // 예: "2025-05-30T10:00"
             ticketMap.put("stadium", ticket.getPlaceName());
             ticketMap.put("placeId", ticket.getPlaceId());
+            ticketMap.put("ticketId", ticket.getTicketId());
 
             ticketMap.put("homeTeamName", ticket.getHomeTeam());
             ticketMap.put("homeTeamLogo", ticket.getHomeTeamLogo());
@@ -243,9 +250,10 @@ public class ticketController {
     // 경기장, 기차 열차 예매 좌석 가져오기
     @RequestMapping(value = "/api/matchSeat")
     @ResponseBody
-    public List<TicketVo> ticketPopupSeat(@RequestParam("placeId") String placeId, TicketVo vo) {
-
-        List<TicketVo> dbTicketSeats = ticketService.ticketPopupSeat(placeId);
+    public List<TicketVo> ticketPopupSeat(@RequestParam("placeId") String placeId, @RequestParam("ticketId") String ticketId, TicketVo vo) {
+        vo.setTicketId(ticketId);
+        vo.setPlaceId(placeId);
+        List<TicketVo> dbTicketSeats = ticketService.ticketPopupSeat(vo);
         return dbTicketSeats;
     }
 
@@ -255,17 +263,62 @@ public class ticketController {
         try {
             HttpSession session = request.getSession();
             String userId = (String) session.getAttribute("userId");
-            if(userId != "" && userId != null){
-                vo.setUserId(userId);
-                ticketService.reserveInsert(vo);
-                return ResponseEntity.ok("예매 성공");
-            }else{
+            Integer userPoint = (Integer) session.getAttribute("userPoint");
+            Integer getPrice = Integer.valueOf(vo.getPrice());
+            // 좌석 수 구하기
+            int seatCount = (vo.getSeats() != null) ? vo.getSeats().size() : 1; // seats가 null일 경우 1로 처리
+
+            // 좌석당 차감 포인트 계산
+            Integer perSeatPoint = getPrice / seatCount;
+
+            Integer updatePoint = userPoint - getPrice;
+
+            if (userId == null || userId.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 후 예매해주세요.");
             }
+            if (userPoint == null || userPoint < getPrice) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(9083);
+            }
+            vo.setUserId(userId);
+            vo.setPoint(updatePoint);
+            vo.setSeatPrice(String.valueOf(perSeatPoint));
+            ticketService.pointUpdate(vo);
+            ticketService.reserveInsert(vo);
+            return ResponseEntity.ok("예매 성공");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("예매 실패");
         }
+    }
+
+    @GetMapping("/api/trains")
+    @ResponseBody
+    public List<Map<String, Object>> getTrainCard( @RequestParam String awayTeam,
+                                                   @RequestParam String homeTeam,
+                                                   @RequestParam String startDate, TicketVo vo) {
+        List<Map<String, Object>> ticketList = new ArrayList<>();
+        vo.setAwayTeam(awayTeam);
+        vo.setHomeTeam(homeTeam);
+        vo.setStartDate(startDate);
+        List<TicketVo> dbTickets = ticketService.getTrainCard(vo); // 서비스 계층에서 DB 조회
+
+        for (TicketVo ticket : dbTickets) {
+            Map<String, Object> ticketMap = new HashMap<>();
+            ticketMap.put("startDate", ticket.getStartDate());      // 예: "2025-06-06T18:30"
+            ticketMap.put("openDate", ticket.getOpenDate());        // 예: "2025-05-30T10:00"
+            ticketMap.put("placeName", ticket.getPlaceName());
+            ticketMap.put("ticketName", ticket.getTicketName());
+            ticketMap.put("placeId", ticket.getPlaceId());
+            ticketMap.put("ticketId", ticket.getTicketId());
+            ticketMap.put("description", ticket.getDescription());
+            ticketMap.put("homeTeamName", ticket.getHomeTeam());
+            ticketMap.put("awayTeamName", ticket.getAwayTeam());
+
+            ticketList.add(ticketMap);
+        }
+
+
+        return ticketList;
     }
 
 }

@@ -3,7 +3,8 @@
     position: relative;
     width: 100%;
     max-width: 1600px;
-    height: 680px;
+    max-height: 580px;
+    height: 50%;
     margin: 0 auto 30px auto;
     background: transparent;
     display: flex;
@@ -110,7 +111,7 @@
 }
 
 .ticket-cards {
-    width: 1535px;
+    width: 1900px;
     overflow: hidden;
     position: relative;
 }

@@ -17,7 +17,7 @@
     .ticket-container {
         font-family: 'Pretendard', 'Malgun Gothic', Arial, sans-serif;
         width: 90%;
-        min-height: 80vh;          /* 화면 높이의 80% */
+        min-height: 70vh;          /* 화면 높이의 80% */
         margin: 40px auto;
         border: 1px solid #e5e5e5;
         border-radius: 14px;
@@ -34,7 +34,7 @@
     }
     .ticket-qr {
         display: flex;
-        height: 430px;
+        height: 370px;
         justify-content: center;
         align-items: center;
         margin-bottom: 16px;

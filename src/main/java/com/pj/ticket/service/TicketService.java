@@ -53,8 +53,8 @@ public class TicketService {
         return ticketDAO.searchMatchCard(vo);
     }
 
-    public List<TicketVo> ticketPopupSeat(String placeId){
-        return ticketDAO.ticketPopupSeat(placeId);
+    public List<TicketVo> ticketPopupSeat(TicketVo vo){
+        return ticketDAO.ticketPopupSeat(vo);
     }
     public void reserveInsert(TicketVo vo) throws Exception{
         List<String> seats = vo.getSeats();
@@ -70,9 +70,15 @@ public class TicketService {
             vo.setSeatCol(col);
 
             ticketDAO.reserveInsert(vo);
-            ticketDAO.reserveUpdate(vo);
         }
 
+    }
+
+    public void pointUpdate(TicketVo vo) throws Exception{
+        ticketDAO.pointUpdate(vo);
+    }
+    public List<TicketVo> getTrainCard(TicketVo vo){
+        return ticketDAO.searchTrainCard(vo);
     }
 
 }
