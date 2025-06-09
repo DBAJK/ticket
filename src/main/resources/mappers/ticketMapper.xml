@@ -169,7 +169,7 @@
              , awayTeamLogo
              , startDate
              , openDate
-        FROM book_show
+        FROM book_show bs
         WHERE 1=1
             AND ticketType = 'Train'
             AND homeTeam = #{homeTeam}
@@ -178,4 +178,19 @@
         ORDER BY description
     </select>
 
+    <select id="trainTicketPopupSeat" parameterType="com.pj.ticket.vo.TicketVo" resultType="com.pj.ticket.vo.TicketVo">
+        SELECT bs.ticketId, bs.ticketName, bs.startDate, bs.homeTeamLogo, bs.startDate
+             , p.placeId, p.placeName, p.address, p.seatZone, p.seatRow, p.seatCol, p.seatprice
+             , COALESCE(sp.seatStatus, 'available') AS seatStatus
+        FROM place p
+                 LEFT JOIN book_show bs ON bs.placeId = p.placeId
+                 LEFT JOIN seatprice sp ON sp.placeId = p.placeId
+            AND sp.ticketId = bs.ticketId
+            AND sp.seatZone = p.seatZone
+            AND sp.seatRow = p.seatRow
+            AND sp.seatCol = p.seatCol
+        WHERE p.placeId = #{placeId}
+          AND bs.ticketId = #{ticketId}
+        ORDER BY p.seatZone+0, p.seatRow, p.seatCol+0
+    </select>
 </mapper>

@@ -177,7 +177,7 @@
                 </td>
                 <td>
                     <button class="seat-button"
-                            onclick="selectSeat(${'${train.ticketId}'})">
+                            onclick="selectSeat(${'${train.ticketId}'},${'${train.placeId}'})">
                         예매하기
                     </button>
                 </td>
@@ -300,9 +300,9 @@
         renderPagination();
     }
 
-    function selectSeat(ticketId) {
-        alert('좌석 선택: ' + ticketId);
-        window.open('popup/trainPopup?ticketId=' + ticketId, "trainPopup", "width=1350,height=1200");
+    function selectSeat(ticketId, placeId) {
+        const startDate = document.getElementById('todayDate').value;
+        window.open('popup/trainPopup?ticketId=' + ticketId + '&placeId=' + placeId + '&startDate=' + startDate, "trainPopup", "width=1350,height=1200");
     }
 
     departureSelect.addEventListener('change', () => {

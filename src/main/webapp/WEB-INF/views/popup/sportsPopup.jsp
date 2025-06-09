@@ -387,5 +387,11 @@
         const formatDate = year + '.' + month + '.' + day + '(' + weekday + ')' +  hours + ':' + minutes;
         return formatDate;
     }
+    // ESC 키로 팝업 닫기
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            window.close();
+        }
+    });
 
 </script>

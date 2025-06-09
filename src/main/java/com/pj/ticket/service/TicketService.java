@@ -81,4 +81,7 @@ public class TicketService {
         return ticketDAO.searchTrainCard(vo);
     }
 
+    public List<TicketVo> trainTicketPopupSeat(TicketVo vo){
+        return ticketDAO.trainTicketPopupSeat(vo);
+    }
 }

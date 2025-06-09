@@ -31,4 +31,5 @@ public interface TicketDAO {
 
     List<TicketVo> searchTrainCard(TicketVo vo);
 
+    List<TicketVo> trainTicketPopupSeat(TicketVo vo);
 }
