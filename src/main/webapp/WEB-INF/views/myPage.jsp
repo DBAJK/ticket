@@ -52,6 +52,7 @@
 
     #joinForm input[type="text"],
     #joinForm input[type="password"],
+    #joinForm input[type="number"],
     #joinForm input[type="date"],
     #joinForm input[type="tel"] {
         width: 100%;
@@ -64,14 +65,6 @@
         outline: none;
         transition: border 0.2s;
         box-sizing: border-box;
-    }
-
-    #joinForm input[type="text"]:focus,
-    #joinForm input[type="password"]:focus,
-    #joinForm input[type="date"]:focus,
-    #joinForm input[type="tel"]:focus {
-        border: 1.5px solid #4a5cc6;
-        background: #fff;
     }
 
     #joinForm a,
@@ -173,7 +166,7 @@
         <p>이름</p> <input type="text" name="userName" id="userName" placeholder="변경할 이름을 입력해주세요."><br>
         <p>전화번호</p> <input type="tel" name="telNo" id="telNo" ><br>
         <p>생년월일</p> <input type="text" name="birtyD" id="birtyD" ><br>
-        <p>사용자 포인트</p> <input type="text" name="userPoint" id="userPoint"><br>
+        <p>사용자 포인트</p> <input type="number" name="userPoint" id="userPoint"><br>
     </form>
 
 </div>
@@ -191,7 +184,6 @@
                     $("#telNo").val(res.phone).prop("readonly", true);
                     $("#birtyD").val(res.birthday).prop("readonly", true);
                     $("#userPoint").val(res.point).prop("readonly", true);
-                    // 패스워드는 서버에서 보통 내려주지 않으므로 빈 채로 둡니다.
                 } else {
                     alert("사용자 정보를 불러오지 못했습니다.");
                     location.href = "/sportsForm";
@@ -237,6 +229,5 @@
                 location.href = '/sportsForm';
             }
         });
-
     });
 </script>

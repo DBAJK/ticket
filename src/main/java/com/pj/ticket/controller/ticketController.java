@@ -18,6 +18,8 @@ public class ticketController {
     @Autowired(required = false)
     TicketService ticketService;
 
+
+    // 화면 이동 컨트롤
     @GetMapping("/")
     public String index(@RequestParam(value = "formType", required = false) String formType, Model model) {
         if (formType == null) {
@@ -120,7 +122,7 @@ public class ticketController {
         }
         return loginId;
     }
-    
+
     //로그아웃
     @GetMapping("/logout")
     public String logout(HttpServletRequest request) {
@@ -207,6 +209,7 @@ public class ticketController {
         return resultList;
     }
 
+    //예매 정보 취소
     @PostMapping("/api/ticketCancel")
     @ResponseBody
     public ResponseEntity<String> cancelReservation(HttpServletRequest request, TicketVo vo) {
@@ -218,7 +221,7 @@ public class ticketController {
         return ResponseEntity.ok("success");
     }
 
-    // sportsForm 티켓 정보 가져오기 
+    // sportsForm 티켓 정보 가져오기
     @GetMapping("/getTicketList")
     @ResponseBody
     public List<Map<String, Object>> getTicketList(TicketVo vo) {
@@ -291,6 +294,7 @@ public class ticketController {
         }
     }
 
+    // 기차 예매 정보 가져오는 코드
     @GetMapping("/api/trains")
     @ResponseBody
     public List<Map<String, Object>> getTrainCard( @RequestParam String awayTeam,
